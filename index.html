@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>СЛТ — Калькулятор перевозки</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{--navy:#063e58;--orange:#fa4616;--bg:#f5f5f3;--white:#fff;--s2:#f0f1f2;--border:#e0e2e5;--bhi:#c8cace;--text:#0d1117;--t2:#4c5157;--t3:#9a9fa8;--ok:#1f7a50;--ok-bg:#e8f6ef;--warn:#b36000;--warn-bg:#fff3e0;--err:#c0392b;--info:#063e58;--info-bg:#e6f0f5;--r:4px;--rl:6px}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Manrope',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+.hero{background:var(--navy)}
+.htop{display:flex;align-items:center;justify-content:space-between;padding:14px 40px;border-bottom:1px solid rgba(255,255,255,.08)}
+.logo{display:flex;align-items:center;gap:12px}
+.lbox{width:42px;height:42px;background:var(--orange);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.llet{font-size:15px;font-weight:900;color:#fff;letter-spacing:-.5px}
+.ltxt{font-size:10px;font-weight:700;color:#fff;letter-spacing:.1em;text-transform:uppercase;line-height:1.4}
+.htag{font-size:10px;color:rgba(255,255,255,.3);letter-spacing:.08em;text-transform:uppercase;font-weight:500}
+.hbody{padding:28px 40px 24px;max-width:960px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.hleft{flex:1;min-width:260px}
+.hey{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.hey::before{content:'';width:18px;height:2px;background:var(--orange)}
+.hero h1{font-size:clamp(24px,4vw,40px);font-weight:800;color:#fff;line-height:1.1;letter-spacing:-.02em;margin-bottom:4px}
+.hero h1 em{color:var(--orange);font-style:normal}
+.hsub{font-size:11px;color:rgba(255,255,255,.35);font-weight:400;line-height:1.6;max-width:380px}
+.hstats{display:flex;gap:20px;flex-wrap:wrap;border-left:1px solid rgba(255,255,255,.1);padding-left:24px}
+.hs{text-align:center}
+.hsn{font-size:22px;font-weight:800;color:var(--orange);line-height:1;margin-bottom:2px}
+.hsl{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.05em;font-weight:600;text-transform:uppercase}
+.abar{height:3px;background:var(--orange)}
+.mode-bar{background:var(--white);border-bottom:1px solid var(--border);padding:0 40px;display:flex;align-items:center;position:sticky;top:0;z-index:50;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.mode-btn{padding:13px 22px;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--t3);border:none;background:transparent;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;font-family:'Manrope',sans-serif;text-transform:uppercase}
+.mode-btn.active{color:var(--orange);border-bottom-color:var(--orange)}
+.mode-btn:hover:not(.active){color:var(--t2)}
+.mode-lbl{margin-left:auto;font-size:10px;color:var(--t3);font-weight:500;padding:13px 0}
+.main{max-width:960px;margin:0 auto;padding:20px 24px 80px}
+.sec{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:16px 20px;margin-bottom:10px;transition:border-color .2s,box-shadow .2s}
+.sec:focus-within{border-color:rgba(6,62,88,.25);box-shadow:0 0 0 3px rgba(6,62,88,.05)}
+.stitle{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--t3);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.snum{color:var(--orange);margin-right:5px}
+.ssub{color:var(--orange);font-size:9px;letter-spacing:.1em}
+.scmt{font-size:10px;color:var(--t3);margin-bottom:10px;font-weight:500;line-height:1.5;font-style:italic}
+label.lbl{font-size:11px;color:var(--t2);display:block;margin-bottom:4px;font-weight:600}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Manrope',sans-serif;font-size:13px;padding:8px 11px;height:36px;transition:border-color .15s,box-shadow .15s;appearance:none;-webkit-appearance:none}
+textarea{height:auto;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(250,70,22,.1)}
+input::placeholder,textarea::placeholder{color:var(--t3)}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%234c5157'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px;cursor:pointer;background-color:var(--s2)}
+select option{background:var(--white)}
+input[type=number]::-webkit-inner-spin-button{opacity:.3}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.field{margin-bottom:10px}
+.hint{font-size:10px;color:var(--t3);margin-top:3px;font-weight:500;line-height:1.5}
+.amtrow{display:flex;gap:6px}
+.amtrow input{flex:1}
+.amtrow select{flex:0 0 78px;height:36px}
+.tgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.tbtn{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px 6px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
+.tbtn.sel{border-color:var(--orange);background:rgba(250,70,22,.06)}
+.tico{font-size:20px;display:block;margin-bottom:4px}
+.tlbl{font-size:10px;color:var(--t2);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.tbtn.sel .tlbl{color:var(--orange)}
+.vtabs{display:flex;gap:3px;margin-bottom:12px;background:var(--s2);border-radius:var(--r);padding:3px;border:1px solid var(--border)}
+.vtab{flex:1;font-size:11px;padding:5px 7px;border-radius:3px;border:none;background:transparent;color:var(--t2);cursor:pointer;transition:all .15s;font-weight:600;font-family:'Manrope',sans-serif}
+.vtab.active{background:var(--white);color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid var(--border)}
+.dim-row{display:flex;align-items:center;gap:5px;margin-bottom:5px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:7px 9px}
+.dim-row input{width:58px;text-align:center;height:30px;background:var(--white)}
+.dsep{color:var(--t3);font-size:12px;font-weight:700}
+.dbadge{font-size:10px;color:var(--t2);min-width:54px;text-align:right;font-weight:600;flex-shrink:0}
+.drm{background:none;border:none;cursor:pointer;color:var(--t3);font-size:13px;padding:0 2px;flex-shrink:0;transition:color .15s}
+.drm:hover{color:var(--err)}
+.add-btn{font-size:11px;padding:6px 12px;border-radius:var(--r);border:1px dashed var(--bhi);background:transparent;color:var(--t2);cursor:pointer;width:100%;margin-bottom:8px;font-weight:600;transition:all .15s;font-family:'Manrope',sans-serif}
+.add-btn:hover{border-color:var(--orange);color:var(--orange)}
+.volsum{background:var(--navy);border-radius:var(--r);padding:9px 13px;display:flex;gap:14px;flex-wrap:wrap}
+.vs{font-size:11px;color:rgba(255,255,255,.5);font-weight:500}
+.vs b{color:#fff}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:7px}
+.citem{display:flex;align-items:flex-start;gap:7px;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:9px 11px;cursor:pointer;transition:all .15s}
+.citem:hover{border-color:var(--orange)}
+.citem input[type=checkbox]{width:13px;height:13px;margin-top:2px;flex-shrink:0;accent-color:var(--orange)}
+.clbl{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:1px}
+.csub{font-size:10px;color:var(--t3);font-weight:500}
+.curgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
+.curbtn{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:9px 7px;text-align:center;cursor:pointer;transition:all .15s;user-select:none}
+.curbtn.sel{border-color:var(--navy);background:rgba(6,62,88,.06)}
+.csym{font-size:17px;font-weight:800;display:block;margin-bottom:1px;color:var(--text)}
+.curbtn.sel .csym{color:var(--navy)}
+.cnm{font-size:10px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.curbtn.sel .cnm{color:var(--navy)}
+.rrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ritem{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2);font-weight:600}
+.ritem input{width:68px}
+.upload-area{border:2px dashed var(--border);border-radius:var(--rl);padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--s2);position:relative}
+.upload-area:hover,.upload-area.drag{border-color:var(--orange);background:rgba(250,70,22,.03)}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:28px;margin-bottom:6px;display:block}
+.upload-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:3px}
+.upload-sub{font-size:11px;color:var(--t3);font-weight:500}
+.doc-list{margin-top:9px;display:flex;flex-direction:column;gap:5px}
+.doc-item{display:flex;align-items:center;gap:9px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:7px 11px}
+.doc-icon{font-size:16px;flex-shrink:0}
+.doc-name{flex:1;font-size:12px;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-status{font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px;flex-shrink:0}
+.ds-read{background:var(--ok-bg);color:var(--ok)}
+.ds-pending{background:var(--warn-bg);color:var(--warn)}
+.ds-err{background:#fdecea;color:var(--err)}
+.doc-rm{background:none;border:none;cursor:pointer;color:var(--t3);font-size:14px;flex-shrink:0}
+.doc-rm:hover{color:var(--err)}
+.parse-btn{width:100%;padding:9px;border-radius:var(--r);background:var(--navy);color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:all .2s;margin-top:7px}
+.parse-btn:hover{background:#052f43}
+.parse-btn:disabled{opacity:.4;cursor:default}
+.extracted-fields{margin-top:9px;background:var(--ok-bg);border:1px solid rgba(31,122,80,.2);border-left:3px solid var(--ok);border-radius:var(--r);padding:9px 13px}
+.ef-title{font-size:10px;font-weight:700;color:var(--ok);letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+.ef-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:5px}
+.ef-item{background:var(--white);border-radius:var(--r);padding:5px 9px}
+.ef-label{font-size:9px;color:var(--t3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:1px}
+.ef-val{font-size:12px;font-weight:700;color:var(--navy)}
+.cbtn{width:100%;padding:11px;border-radius:var(--r);background:var(--orange);color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:'Manrope',sans-serif;letter-spacing:.06em;text-transform:uppercase;transition:all .2s}
+.cbtn:hover{background:#d93c0e;transform:translateY(-1px);box-shadow:0 6px 20px rgba(250,70,22,.3)}
+.cbtn:disabled{opacity:.4;cursor:default;transform:none;box-shadow:none}
+.cbtn.navy{background:var(--navy)}.cbtn.navy:hover{background:#052f43;box-shadow:0 6px 20px rgba(6,62,88,.3)}
+.cbtn.outline{background:transparent;color:var(--orange);border:1px solid var(--orange)}.cbtn.outline:hover{background:rgba(250,70,22,.05);transform:none;box-shadow:none}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.results{margin-top:14px}
+.rc{background:var(--white);border:1px solid var(--border);border-left:4px solid var(--orange);border-radius:var(--rl);padding:16px;margin-bottom:9px;animation:fadeUp .3s ease both}
+.rc.navy-card{border-left-color:var(--navy)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.rch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.rcl{display:flex;align-items:center;gap:9px}
+.rcico{font-size:20px}
+.rcname{font-size:14px;font-weight:800;color:var(--navy)}
+.rcsub{font-size:11px;color:var(--t2);margin-top:1px;font-weight:500}
+.rcr{text-align:right}
+.rcamt{font-size:22px;font-weight:800;color:var(--orange);letter-spacing:-.02em;line-height:1}
+.rcfull{font-size:11px;color:var(--navy);margin-top:2px;font-weight:700}
+.rccur{font-size:10px;color:var(--t3);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;border-top:1px solid var(--border);padding-top:9px;margin-bottom:9px}
+.st{background:var(--s2);border-radius:var(--r);padding:7px 9px;border-left:2px solid var(--orange)}
+.stl{font-size:10px;color:var(--t3);margin-bottom:1px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.stv{font-size:12px;font-weight:700;color:var(--navy)}
+.tbr{display:flex;justify-content:space-between;font-size:12px;color:var(--t2);padding:3px 0;font-weight:500}
+.tbr.tot{font-weight:700;color:var(--navy);font-size:13px;border-top:1px solid var(--border);margin-top:4px;padding-top:6px}
+.tbr.cust{color:var(--warn)}
+.bdown{border-top:1px solid var(--border);padding-top:9px;margin-bottom:5px}
+.badge{font-size:10px;padding:2px 6px;border-radius:2px;margin-left:4px;vertical-align:middle;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.b-best{background:var(--ok-bg);color:var(--ok)}
+.b-fast{background:var(--info-bg);color:var(--info)}
+.b-os{background:var(--warn-bg);color:var(--warn)}
+.b-lcl{background:var(--s2);color:var(--t2);border:1px solid var(--border)}
+.b-wh{background:rgba(250,70,22,.1);color:var(--orange)}
+.range-card{background:var(--navy);border-radius:var(--rl);padding:16px 20px;margin-bottom:10px}
+.range-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:12px}
+.range-modes{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.rm-card{background:rgba(255,255,255,.06);border-radius:var(--r);padding:12px 14px;border:1px solid rgba(255,255,255,.1)}
+.rm-mode{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.rm-range{font-size:18px;font-weight:800;color:var(--orange);letter-spacing:-.01em}
+.rm-days{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px;font-weight:500}
+.range-note{font-size:10px;color:rgba(255,255,255,.3);margin-top:10px;font-weight:500;line-height:1.6}
+.dtable{width:100%;border-collapse:collapse;font-size:11px;margin-top:7px}
+.dtable th{text-align:left;padding:5px 8px;font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--t3);border-bottom:1px solid var(--border);background:var(--s2)}
+.dtable td{padding:6px 8px;border-bottom:1px solid var(--border);vertical-align:top}
+.dtable tr:last-child td{border-bottom:none}
+.dreq{display:inline-block;font-size:9px;padding:2px 5px;border-radius:2px;font-weight:700;text-transform:uppercase}
+.dreq.yes{background:rgba(250,70,22,.1);color:var(--orange)}
+.dreq.rec{background:var(--s2);color:var(--t3)}
+.agent-blk{background:var(--navy);border-radius:var(--r);padding:10px 13px;margin-top:9px;font-size:11px;color:rgba(255,255,255,.6);line-height:1.8;font-weight:500}
+.agent-ttl{font-size:10px;color:var(--orange);margin-bottom:4px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.city-wrap{position:relative}
+.city-drop{position:absolute;top:100%;left:0;right:0;background:var(--white);border:1px solid var(--orange);border-top:none;border-radius:0 0 var(--r) var(--r);max-height:220px;overflow-y:auto;z-index:200;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.city-opt{padding:8px 12px;font-size:12px;cursor:pointer;font-weight:500;color:var(--text);border-bottom:1px solid var(--border)}
+.city-opt:hover,.city-opt.active{background:rgba(250,70,22,.08);color:var(--orange)}
+.city-opt:last-child{border-bottom:none}
+.city-opt .city-region{font-size:10px;color:var(--t3);font-weight:400;margin-left:6px}
+.cnt-hint{margin-top:9px;display:none;background:var(--navy);border-radius:var(--r);padding:11px 13px}
+.err{font-size:11px;color:var(--err);margin-top:4px;font-weight:600;display:none}
+.hidden{display:none}
+.info-box{background:var(--info-bg);border:1px solid rgba(6,62,88,.2);border-left:3px solid var(--navy);border-radius:var(--r);padding:9px 13px;font-size:11px;color:var(--navy);margin-bottom:9px;line-height:1.6;font-weight:500}
+.warn-box{background:var(--warn-bg);border:1px solid rgba(179,96,0,.2);border-left:3px solid var(--warn);border-radius:var(--r);padding:9px 13px;font-size:11px;color:var(--warn);margin-bottom:9px;line-height:1.6;font-weight:500}
+.season-warn{background:#fff3e0;border:1px solid rgba(250,70,22,.3);border-left:3px solid var(--orange);border-radius:var(--r);padding:9px 13px;font-size:11px;color:#7a3200;margin-bottom:9px;line-height:1.6;font-weight:500}
+.footer{background:var(--navy);border-top:3px solid var(--orange);padding:20px 40px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+.flogo{display:flex;align-items:center;gap:11px}
+.fbox{width:32px;height:32px;background:var(--orange);border-radius:2px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.flet{font-size:12px;font-weight:900;color:#fff;letter-spacing:-.5px}
+.fname{font-size:10px;color:rgba(255,255,255,.35);font-weight:700;letter-spacing:.06em;text-transform:uppercase;line-height:1.5}
+.fright{font-size:10px;color:rgba(255,255,255,.2);font-weight:500;text-align:right;line-height:1.8}
+.bug-btn{position:fixed;bottom:22px;right:22px;background:var(--white);border:1px solid var(--border);border-radius:2px;padding:7px 14px;font-size:11px;color:var(--t2);cursor:pointer;font-family:'Manrope',sans-serif;font-weight:700;letter-spacing:.04em;transition:all .2s;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.bug-btn:hover{border-color:var(--err);color:var(--err)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bhi);border-radius:2px}
+@media(max-width:640px){.htop{padding:12px 16px}.hbody{padding:20px 16px;flex-direction:column;align-items:flex-start}.hstats{border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,.1);padding-top:14px;width:100%}.r2,.r3{grid-template-columns:1fr}.tgrid{grid-template-columns:repeat(2,1fr)}.curgrid{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}.main{padding:14px 14px 60px}.footer{padding:18px}.fright{text-align:left}.mode-bar{padding:0 14px}.cgrid{grid-template-columns:1fr 1fr}.range-modes{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="htop">
+    <div class="logo"><div class="lbox"><span class="llet">СЛТ</span></div><div class="ltxt">Современные<br>литейные технологии</div></div>
+    <div class="htag">Инжиниринговая компания</div>
+  </div>
+  <div class="hbody">
+    <div class="hleft">
+      <div class="hey">Внутренний инструмент · бета</div>
+      <h1>Калькулятор<br><em>перевозки</em></h1>
+      <p class="hsub">Предварительный расчёт для ТКП и точный расчёт перед отгрузкой — с чтением документов поставщика.</p>
+    </div>
+    <div class="hstats">
+      <div class="hs"><div class="hsn">2</div><div class="hsl">режима</div></div>
+      <div class="hs"><div class="hsn">20</div><div class="hsl">городов КНР</div></div>
+      <div class="hs"><div class="hsn">55+</div><div class="hsl">городов РФ</div></div>
+      <div class="hs"><div class="hsn">PDF</div><div class="hsl">читает доки</div></div>
+    </div>
+  </div>
+</div>
+<div class="abar"></div>
+
+<div class="mode-bar">
+  <button class="mode-btn active" id="btn-tkp" onclick="setMode('tkp')">📋 Предварительный расчёт (ТКП)</button>
+  <button class="mode-btn" id="btn-ship" onclick="setMode('ship')">🚢 Перед отгрузкой (точный)</button>
+  <span class="mode-lbl" id="mode-lbl">Ориентировочный диапазон стоимости для коммерческого предложения</span>
+</div>
+
+<div class="main">
+
+<!-- ДОКУМЕНТЫ (только режим отгрузки) -->
+<div class="sec" id="doc-sec" style="display:none">
+  <div class="stitle"><span><span class="snum">📄</span>Документы поставщика</span><span class="ssub">инвойс · пакинг лист · контракт</span></div>
+  <div class="scmt">Загрузите PDF — программа прочитает вес, габариты, стоимость и заполнит поля ниже автоматически</div>
+  <div class="upload-area" id="upload-area">
+    <input type="file" id="file-input" multiple accept=".pdf" onchange="handleFiles(this.files)">
+    <span class="upload-icon">📎</span>
+    <div class="upload-title">Перетащите PDF или нажмите для выбора</div>
+    <div class="upload-sub">Инвойс, пакинг лист, контракт — любые документы от поставщика</div>
+  </div>
+  <div class="doc-list" id="doc-list"></div>
+  <button class="parse-btn" id="parse-btn" onclick="parseAllDocs()" style="display:none">📖 Прочитать документы и заполнить поля</button>
+  <div id="extracted-result"></div>
+</div>
+
+<!-- 01 МАРШРУТ -->
+<div class="sec">
+  <div class="stitle"><span><span class="snum">01</span>Маршрут</span><span class="ssub">откуда / куда</span></div>
+  <div class="r2">
+    <div class="field"><label class="lbl">Откуда</label>
+      <select id="from" onchange="updateRoute()">
+        <option value="">— выберите —</option>
+        <optgroup label="Китай — основной поставщик">
+          <option value="CN_SHA">Шанхай (Shanghai)</option><option value="CN_GZH">Гуанчжоу (Guangzhou)</option>
+          <option value="CN_SZH">Шэньчжэнь (Shenzhen)</option><option value="CN_HKG">Гонконг (Hong Kong)</option>
+          <option value="CN_BEJ">Пекин (Beijing)</option><option value="CN_TJN">Тяньцзинь (Tianjin)</option>
+          <option value="CN_NJN">Нанкин (Nanjing)</option><option value="CN_HZH">Ханчжоу (Hangzhou)</option>
+          <option value="CN_NBO">Нинбо (Ningbo)</option><option value="CN_QDO">Циндао (Qingdao)</option>
+          <option value="CN_DLC">Далянь (Dalian)</option><option value="CN_WUH">Ухань (Wuhan)</option>
+          <option value="CN_CDU">Чэнду (Chengdu)</option><option value="CN_CHQ">Чунцин (Chongqing)</option>
+          <option value="CN_XMN">Сямэнь (Xiamen)</option><option value="CN_FZH">Фучжоу (Fuzhou)</option>
+          <option value="CN_HRB">Харбин (Harbin)</option><option value="CN_SHY">Шэньян (Shenyang)</option>
+          <option value="CN_KMG">Куньмин (Kunming)</option><option value="CN_URQ">Урумчи (Urumqi)</option>
+        </optgroup>
+        <optgroup label="Азия"><option value="KR">Корея</option><option value="JP">Япония</option><option value="IN">Индия</option><option value="TH">Таиланд</option><option value="VN">Вьетнам</option><option value="TR">Турция</option></optgroup>
+        <optgroup label="Европа"><option value="DE">Германия</option><option value="IT">Италия</option><option value="PL">Польша</option><option value="NL">Нидерланды</option><option value="FR">Франция</option></optgroup>
+        <optgroup label="СНГ"><option value="KZ">Казахстан</option><option value="BY">Беларусь</option></optgroup>
+      </select>
+    </div>
+    <div class="field"><label class="lbl">Куда</label>
+      <div class="city-wrap">
+        <input type="text" id="to-input" placeholder="Начните вводить город..." autocomplete="off"
+          oninput="citySearch(this.value,'to-drop','to')"
+          onfocus="citySearch(this.value,'to-drop','to')"
+          onblur="setTimeout(()=>hideDrop('to-drop'),150)"
+          style="width:100%">
+        <div class="city-drop" id="to-drop" style="display:none"></div>
+        <input type="hidden" id="to">
+      </div>
+    </div>
+  </div>
+  <div id="route-info" class="hidden"></div>
+  <div id="season-alert" class="hidden season-warn"></div>
+</div>
+
+<!-- 02 ГРУЗ -->
+<div class="sec">
+  <div class="stitle"><span><span class="snum">02</span>Груз</span><span class="ssub">вес · ТН ВЭД · стоимость · Incoterms</span></div>
+  <div class="r3">
+    <div class="field"><label class="lbl">Вес общий, кг</label><input type="number" inputmode="numeric" pattern="[0-9]*" id="weight" placeholder="500" min="1" oninput="updateSummary()"></div>
+    <div class="field"><label class="lbl">Код ТН ВЭД</label>
+      <div class="city-wrap">
+        <input type="text" id="tnved" placeholder="Код или название оборудования..." autocomplete="off"
+          oninput="onTnved()" onfocus="onTnved()" onblur="setTimeout(()=>hideDrop('tnved-drop'),150)">
+        <div class="city-drop" id="tnved-drop" style="display:none"></div>
+      </div>
+      <div class="hint" id="tnved-hint"></div>
+    </div>
+    <div class="field"><label class="lbl">Дата готовности</label><input type="date" id="readydate" onchange="checkSeason()"></div>
+  </div>
+  <div class="r2">
+    <div class="field">
+      <label class="lbl">Стоимость груза (по инвойсу)</label>
+      <div class="amtrow">
+        <input type="number" inputmode="decimal" id="cargovalue" placeholder="15 000" min="0" oninput="updateCargoHint()">
+        <select id="cargo-cur" onchange="updateCargoHint()" style="flex:0 0 78px"><option value="USD">USD</option><option value="CNY">CNY ¥</option><option value="EUR">EUR</option><option value="RUB">RUB</option></select>
+      </div>
+      <div class="hint" id="cargo-hint">Введите сумму из инвойса в любой валюте — пересчитаем в USD для таможни</div>
+    </div>
+    <div class="field">
+      <label class="lbl">Условия поставки (Incoterms)</label>
+      <select id="incoterms" onchange="onIncoterms()">
+        <optgroup label="Любой транспорт"><option value="EXW">EXW — франко-склад</option><option value="FCA">FCA — франко-перевозчик</option><option value="CPT">CPT — фрахт оплачен до...</option><option value="CIP">CIP — фрахт и страховка до...</option><option value="DAP">DAP — доставка до места</option><option value="DPU">DPU — доставка с выгрузкой</option><option value="DDP">DDP — с оплатой всех пошлин</option></optgroup>
+        <optgroup label="Только море"><option value="FAS">FAS — вдоль борта судна</option><option value="FOB">FOB — франко-борт</option><option value="CFR">CFR — стоимость и фрахт</option><option value="CIF" selected>CIF — стоимость, страховка, фрахт</option></optgroup>
+      </select>
+      <div class="hint" id="inc-hint">Продавец оплачивает фрахт и страховку до порта назначения</div>
+    </div>
+  </div>
+  <div id="tkp-extra">
+    <div class="field"><label class="lbl">Наименование оборудования</label><input type="text" id="eq-name" placeholder="Зубошлифовальный станок с ЧПУ"></div>
+
+  </div>
+</div>
+
+<!-- 03 ОБЪЁМ И ГАБАРИТЫ -->
+<div class="sec" id="vol-sec">
+  <div class="stitle"><span><span class="snum">03</span>Объём и габариты</span><span class="ssub">места · ввод · негабарит</span></div>
+  <!-- ТКП: габариты и заполняемость контейнеров -->
+  <div id="tkp-vol-block">
+    <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px">
+      <input id="tkp-l" type="number" inputmode="numeric" placeholder="Длина" min="1"
+        style="flex:1;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:8px;height:36px;font-family:Manrope,sans-serif;font-size:13px;text-align:center"
+        oninput="tkpCalc()">
+      <span style="color:var(--t3);font-weight:700">×</span>
+      <input id="tkp-w" type="number" inputmode="numeric" placeholder="Ширина" min="1"
+        style="flex:1;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:8px;height:36px;font-family:Manrope,sans-serif;font-size:13px;text-align:center"
+        oninput="tkpCalc()">
+      <span style="color:var(--t3);font-weight:700">×</span>
+      <input id="tkp-h" type="number" inputmode="numeric" placeholder="Высота" min="1"
+        style="flex:1;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:8px;height:36px;font-family:Manrope,sans-serif;font-size:13px;text-align:center"
+        oninput="tkpCalc()">
+      <span style="font-size:11px;color:var(--t3);white-space:nowrap">см</span>
+      <input id="tkp-q" type="number" inputmode="numeric" placeholder="1" min="1" value="1"
+        style="width:52px;background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:8px;height:36px;font-family:Manrope,sans-serif;font-size:13px;text-align:center"
+        oninput="tkpCalc()">
+      <span style="font-size:11px;color:var(--t3)">шт.</span>
+      <span id="tkp-vol-badge" style="font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap;min-width:60px;text-align:right">— м³</span>
+    </div>
+    <div id="tkp-vol-hint" class="hint" style="margin-bottom:8px"></div>
+    <input type="hidden" id="approx-vol" value="0">
+    <div id="tkp-cnt-block" style="display:none;background:#063e58;border-radius:6px;padding:12px 14px;margin-top:4px">
+      <div style="font-size:10px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px">Заполняемость контейнеров</div>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+        <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:600;width:130px;flex-shrink:0">20' стандартный</div>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden">
+          <div id="tkp-b20" style="height:100%;width:0;background:#fa4616;border-radius:4px;transition:width .3s"></div>
+        </div>
+        <div id="tkp-p20" style="font-size:11px;font-weight:800;width:60px;text-align:right;color:#fa4616">—</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+        <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:600;width:130px;flex-shrink:0">40' стандартный</div>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden">
+          <div id="tkp-b40" style="height:100%;width:0;background:#4c8fa0;border-radius:4px;transition:width .3s"></div>
+        </div>
+        <div id="tkp-p40" style="font-size:11px;font-weight:800;width:60px;text-align:right;color:rgba(255,255,255,.7)">—</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+        <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:600;width:130px;flex-shrink:0">40' High Cube</div>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden">
+          <div id="tkp-b40hc" style="height:100%;width:0;background:#4c5157;border-radius:4px;transition:width .3s"></div>
+        </div>
+        <div id="tkp-p40hc" style="font-size:11px;font-weight:800;width:60px;text-align:right;color:rgba(255,255,255,.7)">—</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:7px">
+        <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:600;width:130px;flex-shrink:0">45' High Cube</div>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden">
+          <div id="tkp-b45" style="height:100%;width:0;background:#9a9fa8;border-radius:4px;transition:width .3s"></div>
+        </div>
+        <div id="tkp-p45" style="font-size:11px;font-weight:800;width:60px;text-align:right;color:rgba(255,255,255,.7)">—</div>
+      </div>
+      <div id="tkp-cnt-rec" style="margin-top:6px;font-size:11px;color:#fa4616;font-weight:600"></div>
+    </div>
+  </div>
+
+  <!-- Точный режим: вкладки -->
+  <div id="ship-vol-block" style="display:none">
+  <div class="vtabs">
+    <button class="vtab active" onclick="switchVTab('dims',this)">По габаритам мест</button>
+    <button class="vtab" onclick="switchVTab('manual',this)">Объём вручную</button>
+    <button class="vtab" onclick="switchVTab('oversize',this)">Негабарит</button>
+  </div>
+  <div id="tab-dims">
+    <div style="display:flex;gap:7px;font-size:10px;color:var(--t3);padding:0 9px 5px;font-weight:600;letter-spacing:.04em"><span style="flex:1">Длина × Ширина × Высота (см)</span><span style="width:48px;text-align:center">Кол-во</span><span style="width:54px;text-align:right">Объём</span><span style="width:18px"></span></div>
+    <div id="places-list"></div>
+    <button class="add-btn" onclick="addPlace()">+ добавить место</button>
+    <div class="volsum"><div class="vs">Мест: <b id="s-pl">0</b></div><div class="vs">Объём: <b id="s-vol">0.000 м³</b></div><div class="vs">Объёмный вес (авиа): <b id="s-vw">0 кг</b></div><div class="vs">Расч. вес (авиа): <b id="s-cw">—</b></div></div>
+    <div class="cnt-hint" id="cnt-hint"><div style="font-size:10px;color:rgba(255,255,255,.4);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px">Справочник контейнеров</div><div id="cnt-bars" style="display:flex;flex-direction:column;gap:5px"></div><div id="cnt-rec" style="margin-top:7px;font-size:11px;color:var(--orange);font-weight:600"></div></div>
+  </div>
+  <div id="tab-manual" class="hidden"><div class="r3"><div class="field"><label class="lbl">Объём, м³</label><input type="number" inputmode="decimal" id="vol-m" placeholder="2.50" min="0.01" step="0.01" oninput="updateSummary()"></div><div class="field"><label class="lbl">Кол-во мест</label><input type="number" inputmode="numeric" id="places-m" placeholder="10" min="1"></div><div class="field" style="display:flex;flex-direction:column;justify-content:flex-end"><div class="hint" id="man-vw" style="padding-bottom:6px"></div></div></div></div>
+  <div id="tab-oversize" class="hidden">
+    <div class="warn-box">Негабарит — место длиной свыше 300 см, шириной/высотой свыше 240 см или весом свыше 1000 кг.</div>
+    <div class="r3"><div class="field"><label class="lbl">Длина, см</label><input type="number" inputmode="numeric" id="os-l" placeholder="400" min="1" oninput="updateSummary()"></div><div class="field"><label class="lbl">Ширина, см</label><input type="number" inputmode="numeric" id="os-w" placeholder="250" min="1" oninput="updateSummary()"></div><div class="field"><label class="lbl">Высота, см</label><input type="number" inputmode="numeric" id="os-h" placeholder="260" min="1" oninput="updateSummary()"></div></div>
+    <div class="r2"><div class="field"><label class="lbl">Вес места, кг</label><input type="number" inputmode="numeric" id="os-wt" placeholder="800" min="1"></div><div class="field"><label class="lbl">Кол-во мест</label><input type="number" inputmode="numeric" id="os-qty" placeholder="1" min="1" value="1"></div></div>
+    <div class="field"><label class="lbl">Описание / требования</label><input type="text" id="os-desc" placeholder="Трансформатор, кантовка запрещена, не штабелировать"></div>
+    <div class="hint" id="os-vi" style="margin-bottom:3px"></div>
+  </div>
+  </div><!-- /ship-vol-block -->
+</div>
+
+<!-- 04 ОСОБЫЕ УСЛОВИЯ -->
+<div class="sec">
+  <div class="stitle"><span><span class="snum">04</span>Особые условия загрузки</span><span class="ssub">влияет на стоимость и тип ТС</span></div>
+  <div class="scmt">Отметьте если требуются специальные условия — применяется повышающий коэффициент к стоимости фрахта</div>
+  <div class="cgrid" id="load-opts">
+    <label class="citem"><input type="checkbox" value="opentop" data-k="1.22"><div><div class="clbl">Opentop (открытый верх)</div><div class="csub">Загрузка краном · +22%</div></div></label>
+    <label class="citem"><input type="checkbox" value="side" data-k="1.15"><div><div class="clbl">Боковая загрузка</div><div class="csub">Длинные валы, балки · +15%</div></div></label>
+    <label class="citem"><input type="checkbox" value="lowbed" data-k="1.45"><div><div class="clbl">Низкорамник (lowbed)</div><div class="csub">Тяжёлое оборудование · +45%</div></div></label>
+    <label class="citem"><input type="checkbox" value="flatbed" data-k="1.30"><div><div class="clbl">Площадка (flatbed)</div><div class="csub">Нестандартные габариты · +30%</div></div></label>
+    <label class="citem"><input type="checkbox" value="lashing" data-k="1.08"><div><div class="clbl">Спецкрепёж + сертификат</div><div class="csub">Схема крепления · +8%</div></div></label>
+    <label class="citem"><input type="checkbox" value="adr" data-k="1.35"><div><div class="clbl">ADR (опасный груз)</div><div class="csub">Спецтранспорт и документы · +35%</div></div></label>
+  </div>
+  <div id="load-coeff" style="margin-top:8px;font-size:11px;color:var(--t2);font-weight:600;display:none"></div>
+</div>
+
+<!-- 05 ТРАНСПОРТ -->
+<div class="sec">
+  <div class="stitle"><span><span class="snum">05</span>Тип отправки</span><span class="ssub">можно выбрать несколько</span></div>
+  <div class="tgrid">
+    <div class="tbtn" id="t-air" onclick="toggleT('air')"><span class="tico">✈</span><span class="tlbl">АВИА</span></div>
+    <div class="tbtn" id="t-sea" onclick="toggleT('sea')"><span class="tico">🚢</span><span class="tlbl">МОРЕ</span></div>
+    <div class="tbtn" id="t-rail" onclick="toggleT('rail')"><span class="tico">🚂</span><span class="tlbl">ЖД</span></div>
+    <div class="tbtn" id="t-road" onclick="toggleT('road')"><span class="tico">🚛</span><span class="tlbl">АВТО</span></div>
+  </div>
+  <div id="err-t" class="err">Выберите хотя бы один вид транспорта</div>
+  <div id="sea-opts" style="margin-top:12px;display:none">
+    <div style="font-size:10px;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;font-weight:700">Тип морской отправки</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:7px">
+      <div id="sea-auto" onclick="setSeaMode('auto')" style="background:var(--s2);border:1px solid var(--orange);border-radius:var(--r);padding:10px;cursor:pointer;transition:all .15s"><div style="font-size:11px;font-weight:700;color:var(--orange);margin-bottom:3px;text-transform:uppercase">Авто (по объёму)</div><div style="font-size:10px;color:var(--t2);line-height:1.5;font-weight:500">До 15 м³ → LCL · От 15 м³ → FCL</div></div>
+      <div id="sea-lcl" onclick="setSeaMode('lcl')" style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px;cursor:pointer;transition:all .15s"><div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:3px;text-transform:uppercase">LCL — Сборный</div><div style="font-size:10px;color:var(--t2);line-height:1.5;font-weight:500">Оплата за м³ · до 12–15 м³</div></div>
+      <div id="sea-fcl20" onclick="setSeaMode('fcl20')" style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px;cursor:pointer;transition:all .15s"><div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:3px;text-transform:uppercase">FCL 20' — 20 фут</div><div style="font-size:10px;color:var(--t2);line-height:1.5;font-weight:500">≤ 25 м³ / 21 000 кг</div></div>
+      <div id="sea-fcl40" onclick="setSeaMode('fcl40')" style="background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:10px;cursor:pointer;transition:all .15s"><div style="font-size:11px;font-weight:700;color:var(--t2);margin-bottom:3px;text-transform:uppercase">FCL 40' — 40 фут</div><div style="font-size:10px;color:var(--t2);line-height:1.5;font-weight:500">≤ 55 м³ / 26 000 кг</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 06 ТАМОЖНЯ (только режим отгрузки) -->
+<div class="sec" id="customs-sec">
+  <div class="stitle"><span><span class="snum">06</span>Таможенное оформление</span><span class="ssub">пункт · брокер · СВХ</span></div>
+  <div class="r2">
+    <div class="field"><label class="lbl">Пункт таможенного оформления</label>
+      <select id="customs-pt" onchange="updateCustomsHint()">
+        <optgroup label="Москва и Подмосковье">
+          <option value="SVO">Шереметьево (авиа)</option>
+          <option value="DME">Домодедово (авиа)</option>
+          <option value="VKO">Внуково (авиа)</option>
+          <option value="BRT">Белый Раст (авто/ЖД, Дмитровский р-н)</option>
+          <option value="BUT">Бутово (авто)</option>
+          <option value="HOV">Ховрино (ЖД)</option>
+          <option value="MSK_TOV">Москва-Товарная (ЖД)</option>
+          <option value="ELS">Электросталь</option>
+          <option value="CHK">Чехов</option>
+          <option value="STU">Ступино</option>
+        </optgroup>
+        <optgroup label="Тверская область">
+          <option value="TVR">Тверь</option>
+          <option value="VVL">Вышний Волочёк</option>
+          <option value="TRZ">Торжок</option>
+        </optgroup>
+        <optgroup label="Санкт-Петербург и СЗФО">
+          <option value="SPB">Санкт-Петербург (Пулково, авиа)</option>
+          <option value="BRO">Бронка (морской порт)</option>
+          <option value="VSV">Выборг (граница Финляндия)</option>
+          <option value="PSK">Псков (граница Латвия/Эстония)</option>
+        </optgroup>
+        <optgroup label="Дальний Восток / граница с Китаем">
+          <option value="VLD">Владивосток (морской порт)</option>
+          <option value="ZBK">Забайкальск (АПП, граница КНР)</option>
+          <option value="BLG">Благовещенск (граница КНР)</option>
+          <option value="KHB">Хабаровск</option>
+        </optgroup>
+        <optgroup label="Другие регионы">
+          <option value="EKB">Екатеринбург</option>
+          <option value="NOV">Новосибирск</option>
+          <option value="BRY">Брянск (граница Беларусь)</option>
+          <option value="NIZ">Нижний Новгород</option>
+          <option value="KLG">Калуга</option>
+        </optgroup>
+      </select>
+      <div class="hint" id="cust-hint">Выберите пункт таможенного оформления</div>
+    </div>
+    <div class="field"><label class="lbl">Тип оформления</label>
+      <select id="customs-type">
+        <option value="standard">Стандартное (брокер + сборы ДТ + СВХ)</option>
+        <option value="express">Срочное оформление (+50% к брокеру)</option>
+        <option value="self">Самостоятельно (только сборы таможни)</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- 07 ДОВОЗ -->
+<div class="sec">
+  <div class="stitle"><span><span class="snum">07</span>Довоз по России</span><span class="ssub">реальные ставки Деловых Линий</span></div>
+  <div class="r2">
+    <div class="field"><label class="lbl">Откуда (город отправки)</label>
+      <div class="city-wrap">
+        <input type="text" id="del-from-input" placeholder="Начните вводить город..." autocomplete="off"
+          oninput="delFromSearch(this.value)"
+          onfocus="delFromSearch(this.value)"
+          >
+        <div class="city-drop" id="del-from-drop" style="display:none"></div>
+        <input type="hidden" id="del-from" value="TVR">
+      </div>
+      <div class="hint" style="margin-top:3px">Терминал или склад отправки</div>
+    </div>
+    <div class="field"><label class="lbl">Куда (город клиента)</label>
+      <div class="city-wrap">
+        <input type="text" id="del-city-input" placeholder="Начните вводить город..." autocomplete="off"
+          oninput="delCitySearch(this.value)"
+          onfocus="delCitySearch(this.value)"
+          >
+        <div class="city-drop" id="del-city-drop" style="display:none"></div>
+        <input type="hidden" id="del-city">
+      </div>
+    </div>
+  </div>
+  <div id="del-hint" class="hint" style="margin-bottom:6px">Выберите города отправки и назначения</div>
+  <div id="dl-rate-result"></div>
+  <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <button id="dl-rate-btn" class="add-btn" style="width:auto;margin-bottom:0;border-color:var(--navy);color:var(--navy)" onclick="fetchDellinRate()">🚛 Получить ставку Деловых Линий</button>
+    <span style="font-size:10px;color:var(--t3);font-weight:500">Реальные тарифы · обновляется в реальном времени</span>
+  </div>
+</div>
+
+<!-- 08 ПЕРЕВОЗЧИКИ -->
+<div class="sec">
+  <div class="stitle"><span><span class="snum">08</span>Перевозчики</span><span class="ssub">запрос на расчёт · qc@sltgroup.ru</span></div>
+  <div style="font-size:11px;color:var(--t2);margin-bottom:9px;font-weight:500">Отмеченные получат письмо с параметрами груза. Ответы придут на <b>qc@sltgroup.ru</b></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:7px" id="carrier-cards"></div>
+  <button onclick="addCarrier()" class="add-btn" style="margin-top:7px;margin-bottom:0">+ добавить перевозчика</button>
+</div>
+
+<!-- 09 ВАЛЮТА -->
+<div class="sec">
+  <div class="stitle"><span><span class="snum">09</span>Валюта результата</span><span class="ssub">выберите удобную · скорректируйте курс при необходимости</span></div>
+  <div class="curgrid">
+    <div class="curbtn sel" id="cur-USD" onclick="setCur('USD')"><span class="csym">$</span><span class="cnm">USD</span></div>
+    <div class="curbtn" id="cur-RUB" onclick="setCur('RUB')"><span class="csym">₽</span><span class="cnm">RUB</span></div>
+    <div class="curbtn" id="cur-CNY" onclick="setCur('CNY')"><span class="csym">¥</span><span class="cnm">CNY</span></div>
+    <div class="curbtn" id="cur-EUR" onclick="setCur('EUR')"><span class="csym">€</span><span class="cnm">EUR</span></div>
+  </div>
+  <div class="rrow">
+    <div class="ritem"><label>USD/RUB:</label><input type="number" inputmode="decimal" id="r-rub" value="91" min="50" max="200" step="0.5" oninput="updateCnyRub()"></div>
+    <div class="ritem"><label>USD/CNY:</label><input type="number" inputmode="decimal" id="r-cny" value="7.24" min="5" max="12" step="0.01" oninput="updateCnyRub()"></div>
+    <div class="ritem"><label>USD/EUR:</label><input type="number" inputmode="decimal" id="r-eur" value="0.92" min="0.5" max="2" step="0.01"></div>
+    <div class="ritem"><label style="color:var(--orange);font-weight:700">CNY/RUB:</label><input type="number" inputmode="decimal" id="r-cnyrub" value="12.57" min="5" max="30" step="0.01" oninput="updateFromCnyRub()"><div class="hint" style="margin-top:2px">Юань к рублю</div></div>
+  </div>
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+  <button class="cbtn" id="calcbtn" onclick="calculate()" style="flex:2;min-width:180px">Рассчитать стоимость</button>
+  <button class="cbtn navy" onclick="sendRequest()" style="flex:1;min-width:170px">Отправить запрос перевозчикам</button>
+</div>
+<div id="results" class="results hidden"></div>
+
+<!-- ИСТОРИЯ РАСЧЁТОВ -->
+<div id="history-sec" style="display:none;margin-top:24px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+    <div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t3)">История расчётов</div>
+    <button onclick="clearHistory()" style="font-size:10px;color:var(--err);background:none;border:none;cursor:pointer;font-family:Manrope,sans-serif;font-weight:600">Очистить</button>
+  </div>
+  <div id="history-list"></div>
+</div>
+</div>
+
+<div class="footer">
+  <div class="flogo"><div class="fbox"><span class="flet">СЛТ</span></div><div class="fname">Современные литейные технологии<br>Инжиниринговая компания</div></div>
+  <div class="fright">Внутренний инструмент · бета · данные ориентировочные<br>Не является офертой · sltgroup.ru</div>
+</div>
+<button class="bug-btn" onclick="reportBug()">🐛 Баг / предложение</button>
+<script>
+if(typeof pdfjsLib!=='undefined')pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const selT=new Set();
+let vTab='dims',pid=0,curSel='USD',seaMode='auto',appMode='tkp';
+let tkpPid=0;
+const places=[],uploadedDocs=[],tkpPlaces=[];
+const TKP_BUFFER=1.15;
+
+const CN_GROUP={CN_SHA:'CN_EAST',CN_GZH:'CN_EAST',CN_NBO:'CN_EAST',CN_HZH:'CN_EAST',CN_NJN:'CN_EAST',CN_XMN:'CN_EAST',CN_FZH:'CN_EAST',CN_SZH:'CN_SOUTH',CN_HKG:'CN_SOUTH',CN_KMG:'CN_SOUTH',CN_BEJ:'CN_NORTH',CN_TJN:'CN_NORTH',CN_QDO:'CN_NORTH',CN_DLC:'CN_NORTH',CN_HRB:'CN_NORTH',CN_SHY:'CN_NORTH',CN_WUH:'CN_CENTRAL',CN_CDU:'CN_WEST',CN_CHQ:'CN_WEST',CN_URQ:'CN_WEST'};
+
+const BASE_ROUTES={
+  // air: USD/кг расч. веса | sea: lclM3 USD/м³, fclBase USD/20' | rail: cont20 USD/20'экв, cont40 USD/40'экв | road: cont20 USD/20'экв
+  CN_EAST:{air:{base:5.2,days:[5,8]},sea:{lclM3:320,fclBase:2100,days:[28,35]},rail:{cont20:3200,cont40:4800,days:[14,18]},road:null},
+  CN_SOUTH:{air:{base:5.5,days:[5,9]},sea:{lclM3:330,fclBase:2150,days:[30,38]},rail:{cont20:3400,cont40:5100,days:[16,20]},road:null},
+  CN_NORTH:{air:{base:5.0,days:[5,8]},sea:{lclM3:300,fclBase:2000,days:[26,33]},rail:{cont20:3000,cont40:4500,days:[13,17]},road:null},
+  CN_CENTRAL:{air:{base:5.3,days:[6,9]},sea:{lclM3:325,fclBase:2120,days:[30,37]},rail:{cont20:3300,cont40:4950,days:[15,19]},road:null},
+  CN_WEST:{air:{base:5.8,days:[6,10]},sea:{lclM3:350,fclBase:2300,days:[35,45]},rail:{cont20:2800,cont40:4200,days:[18,24]},road:null},
+  KR:{air:{base:5.8,days:[5,8]},sea:{lclM3:350,fclBase:2300,days:[25,32]},rail:{cont20:3500,cont40:5200,days:[14,18]},road:null},
+  JP:{air:{base:6.2,days:[5,9]},sea:{lclM3:370,fclBase:2500,days:[28,36]},rail:null,road:null},
+  TR:{air:{base:4.0,days:[3,6]},sea:{lclM3:280,fclBase:1800,days:[15,22]},rail:null,road:{cont20:2200,cont40:3300,days:[8,12]}},
+  DE:{air:{base:4.5,days:[3,5]},sea:{lclM3:260,fclBase:1600,days:[18,25]},rail:{cont20:2800,cont40:4200,days:[8,12]},road:{cont20:2000,cont40:3000,days:[5,8]}},
+  IT:{air:{base:4.8,days:[3,6]},sea:{lclM3:270,fclBase:1700,days:[20,28]},rail:null,road:{cont20:2400,cont40:3600,days:[6,9]}},
+  PL:{air:{base:3.8,days:[2,4]},sea:null,rail:{cont20:1800,cont40:2700,days:[5,8]},road:{cont20:1500,cont40:2200,days:[3,5]}},
+  NL:{air:{base:4.2,days:[3,5]},sea:{lclM3:250,fclBase:1550,days:[18,24]},rail:{cont20:2600,cont40:3900,days:[8,11]},road:{cont20:2000,cont40:3000,days:[5,8]}},
+  FR:{air:{base:4.6,days:[3,6]},sea:{lclM3:265,fclBase:1650,days:[20,28]},rail:null,road:{cont20:2500,cont40:3700,days:[6,10]}},
+  IN:{air:{base:5.5,days:[5,9]},sea:{lclM3:340,fclBase:2200,days:[25,35]},rail:null,road:null},
+  TH:{air:{base:5.0,days:[5,8]},sea:{lclM3:300,fclBase:1950,days:[25,35]},rail:null,road:null},
+  VN:{air:{base:5.3,days:[5,8]},sea:{lclM3:310,fclBase:2000,days:[28,38]},rail:null,road:null},
+  KZ:{air:{base:2.5,days:[2,4]},sea:null,rail:{cont20:800,cont40:1200,days:[3,5]},road:{cont20:900,cont40:1400,days:[2,4]}},
+  BY:{air:{base:2.0,days:[1,3]},sea:null,rail:{cont20:600,cont40:900,days:[2,4]},road:{cont20:700,cont40:1050,days:[1,3]}},
+};
+
+const CITY_LIST=[
+  {v:'RU_ABK',n:'Абакан',r:'Сибирь'},{v:'RU_ARH',n:'Архангельск',r:'Север'},{v:'RU_AST',n:'Астрахань',r:'Поволжье'},
+  {v:'RU_BLG',n:'Белгород',r:'Центр'},{v:'RU_BLG_DV',n:'Благовещенск',r:'Дальний Восток'},{v:'RU_BRN',n:'Барнаул',r:'Сибирь'},
+  {v:'RU_BRY',n:'Брянск',r:'Центр'},{v:'RU_CHE',n:'Челябинск',r:'Урал'},{v:'RU_CHR',n:'Череповец',r:'Север'},
+  {v:'RU_CHT',n:'Чита',r:'Сибирь'},{v:'RU_EKB',n:'Екатеринбург',r:'Урал'},{v:'RU_IVN',n:'Иваново',r:'Центр'},
+  {v:'RU_IRK',n:'Иркутск',r:'Сибирь'},{v:'RU_ISH',n:'Ишим',r:'Урал'},{v:'RU_IZH',n:'Ижевск',r:'Урал'},
+  {v:'RU_KAZ',n:'Казань',r:'Поволжье'},{v:'RU_KGN',n:'Курган',r:'Урал'},{v:'RU_KHB',n:'Хабаровск',r:'Дальний Восток'},
+  {v:'RU_KLG',n:'Калуга',r:'Центр'},{v:'RU_KOS',n:'Кострома',r:'Центр'},{v:'RU_KRD',n:'Краснодар',r:'Юг'},
+  {v:'RU_KRS',n:'Красноярск',r:'Сибирь'},{v:'RU_KUR',n:'Курск',r:'Центр'},{v:'RU_LIP',n:'Липецк',r:'Центр'},
+  {v:'RU_MAG',n:'Магнитогорск',r:'Урал'},{v:'RU_MSK',n:'Москва / МО',r:'Центр'},{v:'RU_MUR',n:'Мурманск',r:'Север'},
+  {v:'RU_NAB',n:'Набережные Челны',r:'Поволжье'},{v:'RU_NIZ',n:'Нижний Новгород',r:'Поволжье'},
+  {v:'RU_NOV',n:'Новосибирск',r:'Сибирь'},{v:'RU_NOV_VL',n:'Великий Новгород',r:'Север'},
+  {v:'RU_NTG',n:'Нижний Тагил',r:'Урал'},{v:'RU_NVK',n:'Новокузнецк',r:'Сибирь'},
+  {v:'RU_OMK',n:'Омск',r:'Сибирь'},{v:'RU_ORB',n:'Оренбург',r:'Урал'},{v:'RU_ORL',n:'Орёл',r:'Центр'},
+  {v:'RU_PET',n:'Петрозаводск',r:'Север'},{v:'RU_PNZ',n:'Пенза',r:'Поволжье'},{v:'RU_PRM',n:'Пермь',r:'Урал'},
+  {v:'RU_PSK',n:'Псков',r:'Север'},{v:'RU_RST',n:'Ростов-на-Дону',r:'Юг'},{v:'RU_RYZ',n:'Рязань',r:'Центр'},
+  {v:'RU_SAM',n:'Самара',r:'Поволжье'},{v:'RU_SAR',n:'Саратов',r:'Поволжье'},{v:'RU_SMO',n:'Смоленск',r:'Центр'},
+  {v:'RU_SPB',n:'Санкт-Петербург',r:'Центр'},{v:'RU_STR',n:'Ставрополь',r:'Юг'},
+  {v:'RU_SUR',n:'Сургут',r:'Урал'},{v:'RU_TAG',n:'Таганрог',r:'Юг'},{v:'RU_TLT',n:'Тольятти',r:'Поволжье'},
+  {v:'RU_TOM',n:'Томск',r:'Сибирь'},{v:'RU_TUL',n:'Тула',r:'Центр'},{v:'RU_TVR',n:'Тверь — склад СЛТ',r:'Центр'},
+  {v:'RU_TYM',n:'Тюмень',r:'Урал'},{v:'RU_UFA',n:'Уфа',r:'Поволжье'},{v:'RU_ULY',n:'Ульяновск',r:'Поволжье'},
+  {v:'RU_VLD',n:'Владивосток',r:'Дальний Восток'},{v:'RU_VLD_OBL',n:'Владимир',r:'Центр'},
+  {v:'RU_VLG',n:'Вологда',r:'Север'},{v:'RU_VLK',n:'Волгодонск',r:'Юг'},{v:'RU_VOL',n:'Волгоград',r:'Поволжье'},
+  {v:'RU_VRN',n:'Воронеж',r:'Центр'},{v:'RU_YAR',n:'Ярославль',r:'Центр'},{v:'RU_YKT',n:'Якутск',r:'Дальний Восток'},
+  {v:'RU_ZLT',n:'Златоуст',r:'Урал'},{v:'RU_CHE58',n:'Чебоксары',r:'Поволжье'},
+  {v:'KZ',n:'Казахстан (Алматы, Астана)',r:'СНГ'},{v:'BY',n:'Беларусь (Минск)',r:'СНГ'},{v:'UZ',n:'Узбекистан (Ташкент)',r:'СНГ'},
+];
+function citySearch(q,dropId,hiddenId){
+  const drop=document.getElementById(dropId);
+  if(!drop)return;
+  const lq=(q||'').toLowerCase().trim();
+  const res=lq.length<1
+    ?CITY_LIST
+    :CITY_LIST.filter(c=>c.n.toLowerCase().includes(lq)||c.r.toLowerCase().includes(lq));
+  if(!res.length){
+    drop.innerHTML='<div class="city-opt" style="color:var(--t3);cursor:default">Город не найден</div>';
+    drop.style.display='block';return;
+  }
+  drop.innerHTML=res.map(c=>`<div class="city-opt" onmousedown="event.preventDefault();selectCity('${c.v}','${c.n}','${dropId}','${hiddenId}')">${c.n}<span class="city-region">${c.r}</span></div>`).join('');
+  drop.style.display='block';
+}
+function selectCity(val,name,dropId,hiddenId){
+  document.getElementById(hiddenId).value=val;
+  const inp=document.getElementById(hiddenId+'-input');
+  if(inp)inp.value=name;
+  hideDrop(dropId);
+  updateRoute();
+}
+function hideDrop(id){const el=document.getElementById(id);if(el)el.style.display='none';}
+
+const CITY_META={RU_MSK:{name:'Москва',add:0},RU_TVR:{name:'Тверь — склад СЛТ',add:0.05,wh:true},RU_SPB:{name:'Санкт-Петербург',add:0.08},RU_VRN:{name:'Воронеж',add:0.12},RU_TUL:{name:'Тула',add:0.08},RU_RYZ:{name:'Рязань',add:0.09},RU_KLG:{name:'Калуга',add:0.07},RU_YAR:{name:'Ярославль',add:0.08},RU_IVN:{name:'Иваново',add:0.10},RU_KOS:{name:'Кострома',add:0.11},RU_VLD_OBL:{name:'Владимир',add:0.07},RU_SMO:{name:'Смоленск',add:0.09},RU_BRY:{name:'Брянск',add:0.10},RU_ORL:{name:'Орёл',add:0.11},RU_KUR:{name:'Курск',add:0.12},RU_BLG:{name:'Белгород',add:0.14},RU_LIP:{name:'Липецк',add:0.13},RU_NIZ:{name:'Нижний Новгород',add:0.14},RU_KAZ:{name:'Казань',add:0.16},RU_SAM:{name:'Самара',add:0.18},RU_SAR:{name:'Саратов',add:0.20},RU_UFA:{name:'Уфа',add:0.22},RU_PNZ:{name:'Пенза',add:0.17},RU_ULY:{name:'Ульяновск',add:0.18},RU_VOL:{name:'Волгоград',add:0.20},RU_AST:{name:'Астрахань',add:0.25},RU_EKB:{name:'Екатеринбург',add:0.28},RU_CHE:{name:'Челябинск',add:0.28},RU_MAG:{name:'Магнитогорск',add:0.32},RU_NTG:{name:'Нижний Тагил',add:0.30},RU_PRM:{name:'Пермь',add:0.30},RU_IZH:{name:'Ижевск',add:0.28},RU_ORB:{name:'Оренбург',add:0.30},RU_KGN:{name:'Курган',add:0.32},RU_TYM:{name:'Тюмень',add:0.35},RU_NOV:{name:'Новосибирск',add:0.40},RU_OMK:{name:'Омск',add:0.38},RU_TOM:{name:'Томск',add:0.42},RU_KRS:{name:'Красноярск',add:0.50},RU_IRK:{name:'Иркутск',add:0.55},RU_NVK:{name:'Новокузнецк',add:0.45},RU_BRN:{name:'Барнаул',add:0.42},RU_ABK:{name:'Абакан',add:0.52},RU_CHT:{name:'Чита',add:0.60},RU_VLD:{name:'Владивосток',add:0.65},RU_KHB:{name:'Хабаровск',add:0.65},RU_YKT:{name:'Якутск',add:0.80},RU_BLG_DV:{name:'Благовещенск',add:0.70},RU_MUR:{name:'Мурманск',add:0.30},RU_ARH:{name:'Архангельск',add:0.28},RU_VLG:{name:'Вологда',add:0.15},RU_CHR:{name:'Череповец',add:0.16},RU_PSK:{name:'Псков',add:0.12},RU_NOV_VL:{name:'Великий Новгород',add:0.13},RU_PET:{name:'Петрозаводск',add:0.20},RU_ISH:{name:'Ишим',add:0.38},RU_SUR:{name:'Сургут',add:0.42},RU_NAB:{name:'Набережные Челны',add:0.18},RU_TLT:{name:'Тольятти',add:0.18},RU_ZLT:{name:'Златоуст',add:0.30},RU_CHE58:{name:'Чебоксары',add:0.16},RU_RST:{name:'Ростов-на-Дону',add:0.24},RU_STR:{name:'Ставрополь',add:0.26},RU_VLK:{name:'Волгодонск',add:0.28},RU_TAG:{name:'Таганрог',add:0.26},KZ:{name:'Казахстан',add:0.35},BY:{name:'Беларусь',add:0.15},UZ:{name:'Узбекистан',add:0.45}};
+
+const DEL_CITIES={MSK:{name:'Москва',km:167,days:1},SPB:{name:'Санкт-Петербург',km:520,days:1},VRN:{name:'Воронеж',km:770,days:2},TUL:{name:'Тула',km:440,days:1},NIZ:{name:'Нижний Новгород',km:820,days:2},YAR:{name:'Ярославль',km:320,days:1},RYZ:{name:'Рязань',km:590,days:2},KLG:{name:'Калуга',km:490,days:1},VLD_OBL:{name:'Владимир',km:540,days:1},SMO:{name:'Смоленск',km:330,days:1},IVN:{name:'Иваново',km:440,days:1},KOS:{name:'Кострома',km:470,days:1},BRY:{name:'Брянск',km:530,days:2},ORL:{name:'Орёл',km:660,days:2},KUR:{name:'Курск',km:820,days:2},BLG:{name:'Белгород',km:970,days:2},LIP:{name:'Липецк',km:800,days:2},KAZ:{name:'Казань',km:1330,days:3},SAM:{name:'Самара',km:1610,days:3},UFA:{name:'Уфа',km:1890,days:4},SAR:{name:'Саратов',km:1320,days:3},PNZ:{name:'Пенза',km:1190,days:2},ULY:{name:'Ульяновск',km:1420,days:3},VOL:{name:'Волгоград',km:1440,days:3},AST:{name:'Астрахань',km:1830,days:4},EKB:{name:'Екатеринбург',km:2070,days:4},CHE:{name:'Челябинск',km:2220,days:4},MAG:{name:'Магнитогорск',km:2430,days:5},NTG:{name:'Нижний Тагил',km:2130,days:4},PRM:{name:'Пермь',km:1930,days:4},IZH:{name:'Ижевск',km:1690,days:3},TYM:{name:'Тюмень',km:2390,days:5},ORB:{name:'Оренбург',km:2160,days:4},KGN:{name:'Курган',km:2420,days:5},NOV:{name:'Новосибирск',km:3680,days:6},OMK:{name:'Омск',km:3130,days:6},TOM:{name:'Томск',km:3820,days:7},KRS:{name:'Красноярск',km:4380,days:8},IRK:{name:'Иркутск',km:5370,days:10},NVK:{name:'Новокузнецк',km:4070,days:8},BRN:{name:'Барнаул',km:3840,days:7},ABK:{name:'Абакан',km:4520,days:9},CHT:{name:'Чита',km:6480,days:12},VLD:{name:'Владивосток',km:9120,days:15},KHB:{name:'Хабаровск',km:8560,days:14},YKT:{name:'Якутск',km:8900,days:16},BLG_DV:{name:'Благовещенск',km:7730,days:13},MUR:{name:'Мурманск',km:2020,days:4},ARH:{name:'Архангельск',km:1340,days:3},VLG:{name:'Вологда',km:450,days:1},CHR:{name:'Череповец',km:490,days:1},PSK:{name:'Псков',km:450,days:1},NOV_VL:{name:'Великий Новгород',km:390,days:1},PET:{name:'Петрозаводск',km:870,days:2},ISH:{name:'Ишим',km:2470,days:5},SUR:{name:'Сургут',km:2860,days:5},NAB:{name:'Набережные Челны',km:1440,days:3},TLT:{name:'Тольятти',km:1680,days:3},ZLT:{name:'Златоуст',km:2280,days:4},CHE58:{name:'Чебоксары',km:960,days:2},RST:{name:'Ростов-на-Дону',km:1610,days:3},STR:{name:'Ставрополь',km:2040,days:4},VLK:{name:'Волгодонск',km:1660,days:3},TAG:{name:'Таганрог',km:1650,days:3},KZN:{name:'Казахстан (Алматы)',km:3800,days:7},BYN:{name:'Беларусь (Минск)',km:790,days:2},UZN:{name:'Узбекистан (Ташкент)',km:4100,days:8}};
+
+const CUSTOMS_COST={
+  // Актуальные ставки 2025: брокер USD, СВХ USD/сутки
+  SVO:{broker:750,svh_day:48,days:2},DME:{broker:720,svh_day:46,days:2},VKO:{broker:700,svh_day:42,days:2},
+  BRT:{broker:680,svh_day:40,days:3},BUT:{broker:650,svh_day:37,days:3},HOV:{broker:640,svh_day:35,days:3},
+  MSK_TOV:{broker:640,svh_day:35,days:3},ELS:{broker:620,svh_day:32,days:3},CHK:{broker:600,svh_day:30,days:3},
+  STU:{broker:600,svh_day:30,days:3},
+  TVR:{broker:550,svh_day:24,days:2},VVL:{broker:520,svh_day:22,days:2},TRZ:{broker:510,svh_day:20,days:2},
+  SPB:{broker:680,svh_day:40,days:2},BRO:{broker:660,svh_day:38,days:2},VSV:{broker:580,svh_day:30,days:2},
+  PSK:{broker:540,svh_day:26,days:2},
+  VLD:{broker:580,svh_day:30,days:4},ZBK:{broker:520,svh_day:24,days:3},BLG:{broker:540,svh_day:26,days:3},
+  KHB:{broker:560,svh_day:28,days:3},
+  EKB:{broker:650,svh_day:34,days:3},NOV:{broker:630,svh_day:32,days:3},BRY:{broker:560,svh_day:28,days:2},
+  NIZ:{broker:620,svh_day:32,days:3},KLG:{broker:580,svh_day:28,days:2},
+};
+const CUSTOMS_HINTS={
+  SVO:'Шереметьево — авиагрузы, крупнейший авиатаможенный узел. Оформление 1–2 дня. СВХ ~$25/сутки.',
+  DME:'Домодедово — авиагрузы. Оформление 1–2 дня. СВХ ~$24/сутки.',
+  VKO:'Внуково — авиагрузы. Оформление 1–2 дня. СВХ ~$22/сутки.',
+  BRT:'Белый Раст — крупнейший СВХ Подмосковья, авто и ЖД. Оформление 2–3 дня. СВХ ~$18/сутки.',
+  BUT:'Бутово — авто. Оформление 2–3 дня. СВХ ~$17/сутки.',
+  HOV:'Ховрино — ЖД грузы. Оформление 2–3 дня. СВХ ~$16/сутки.',
+  MSK_TOV:'Москва-Товарная — ЖД грузы. Оформление 2–3 дня. СВХ ~$16/сутки.',
+  ELS:'Электросталь — авто/ЖД. Оформление 2–3 дня. СВХ ~$15/сутки.',
+  CHK:'Чехов — авто. Оформление 2–3 дня. СВХ ~$14/сутки.',
+  STU:'Ступино — авто. Оформление 2–3 дня. СВХ ~$14/сутки.',
+  TVR:'Тверь — авто/ЖД. Удобно для грузов на склад СЛТ. Оформление 1–2 дня. СВХ ~$12/сутки.',
+  VVL:'Вышний Волочёк — авто/ЖД. Оформление 1–2 дня. СВХ ~$11/сутки.',
+  TRZ:'Торжок — авто. Оформление 1–2 дня. СВХ ~$11/сутки.',
+  SPB:'Санкт-Петербург (Пулково) — авиа, удобен для Европы. Оформление 1–2 дня. СВХ ~$18/сутки.',
+  BRO:'Бронка — морской порт СПб. Оформление 2–3 дня. СВХ ~$17/сутки.',
+  VSV:'Выборг — граница с Финляндией. Оформление 1–2 дня. СВХ ~$15/сутки.',
+  PSK:'Псков — граница с Латвией и Эстонией. Оформление 1–2 дня. СВХ ~$13/сутки.',
+  VLD:'Владивосток — оптимально для морских грузов из Азии, дешевле чем везти до Москвы. Оформление 2–5 дней. СВХ ~$15/сутки.',
+  ZBK:'Забайкальск — крупнейший АПП на границе с Китаем (авто/ЖД). Быстро для грузов из КНР. Оформление 2–4 дня. СВХ ~$12/сутки.',
+  BLG:'Благовещенск — граница с Китаем (Хэйхэ). Авто/паром. Оформление 2–4 дня. СВХ ~$13/сутки.',
+  KHB:'Хабаровск — авто/авиа/ЖД. Оформление 2–4 дня. СВХ ~$14/сутки.',
+  EKB:'Екатеринбург — удобен для грузов на Урал. Оформление 2–4 дня. СВХ ~$17/сутки.',
+  NOV:'Новосибирск — удобен для Сибири. Оформление 2–4 дня. СВХ ~$16/сутки.',
+  BRY:'Брянск — граница с Беларусью, авто/ЖД. Оформление 1–2 дня. СВХ ~$14/сутки.',
+  NIZ:'Нижний Новгород — авто/ЖД. Оформление 2–3 дня. СВХ ~$15/сутки.',
+  KLG:'Калуга — авто. Оформление 1–2 дня. СВХ ~$14/сутки.',
+};
+
+// Номенклатурная база СЛТ (ДМО + ДЛТ) — из внутреннего классификатора
+const TNVED_MAP={
+  // ── ДМО: Группа 8457 — Фрезерные/токарные обрабатывающие центры ──
+  '8457101008':{name:'Токарный обрабатывающий центр с ЧПУ, горизонтальный',duty:0.05,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'},{n:'Сертификат происхождения',r:false,cost:'3 000–10 000 ₽',who:'ТПП страны отправки'}]},
+  '8457109008':{name:'Вертикально-фрезерный / 5-осевой обрабатывающий центр с ЧПУ',duty:0.07,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'},{n:'Сертификат происхождения',r:false,cost:'3 000–10 000 ₽',who:'ТПП страны отправки'}]},
+  // ── ДМО: Группа 8458 — Токарные станки ──
+  '8458112000':{name:'Токарно-фрезерный центр с ЧПУ / горизонтальный токарный станок',duty:0.05,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8458190000':{name:'Токарно-винторезный станок',duty:0.08,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  // ── ДМО: Группа 8459 — Сверлильные, расточные, фрезерные ──
+  '8459590000':{name:'Вертикальный консольно-фрезерный станок',duty:0.10,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  // ── ДМО: Группа 8461 — Строгальные, зуборезные, зубошлифовальные ──
+  '8461407100':{name:'Станок зубошлифовальный с ЧПУ',duty:0.05,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8461501100':{name:'Станок отрезной',duty:0.09,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── ДЛТ: Группа 8474 — Литейное оборудование (формовочное, смесительное) ──
+  '8474909000':{name:'Оборудование для регенерации формовочной смеси / вибростолы / выбивные решётки',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8474100009':{name:'Установки охлаждения / термической регенерации формовочной смеси / бойлерклавы',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8474809080':{name:'Автоматические формовочные линии (ПГС, ХТС, ВПФ) / стержневые машины / выбивные решётки',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8474390009':{name:'Смесители формовочных и стержневых смесей (катковые, центробежные, вихревые, шнековые)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── ДЛТ: Группа 8454 — Разливка, литьё под давлением ──
+  '8454309009':{name:'Машины разливочные / ковши / машины центробежного и кокильного литья',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8454301000':{name:'Машины литья под давлением / под низким давлением / шприц-машины',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8454900000':{name:'Виброустановки для отделения керамики (ЛВМ)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── ДЛТ: Очистка литья ──
+  '8424301000':{name:'Дробемётные барабаны / камеры абразивоструйные / дробемёты подвесного типа',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8424309000':{name:'Барабаны дробемётные прочие',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8479810000':{name:'Барабаны галтовочные',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── ДЛТ: Инструмент для отделения отливок ──
+  '8467190000':{name:'Пневмоотбойники прибылей / отбойные молотки',duty:0.08,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8467295100':{name:'Углошлифовальные машины',duty:0.10,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Декларация о соответствии ТР ТС',r:true,cost:'20 000–60 000 ₽',who:'Орган по сертификации'}]},
+  '8468100000':{name:'Газовые резаки',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── ДЛТ: Прочее литейное / ЛВМ ──
+  '8479899707':{name:'Пескосыпы',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8419390008':{name:'Оборудование для сушки керамических форм',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8477100001':{name:'Автоматы для изготовления моделей из пенополистирола',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8477100009':{name:'Автоматы для изготовления моделей из пенополистирола (прочие)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8477909000':{name:'Вакуумные опоки / вибростолы специальные (ЛГМ)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8514199000':{name:'Сушильные шкафы для моделей (электрические)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── ДЛТ: Магнитные сепараторы ──
+  '8505902009':{name:'Магнитные железоотделители (прочие)',duty:0.09,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8505110000':{name:'Магнитные железоотделители постоянные',duty:0.15,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── ДЛТ: Пневмотрамбовки ──
+  '8430610000':{name:'Пневмотрамбовки ручные',duty:0.05,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8467890000':{name:'Пневмоинструмент прочий (трамбовки)',duty:0.08,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── ДЛТ: Кокильные машины ──
+  '8462220002':{name:'Ручные кокильные станки',duty:0.07,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── Транспортировка: Краны ──
+  '8426110000':{name:'Краны мостовые и подвесные',duty:0.0,docs:[{n:'Технический паспорт / паспорт крана',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Разрешение на ввоз грузоподъёмного оборудования',r:false,cost:'5 000–20 000 ₽',who:'Ростехнадзор'}]},
+  '8426190000':{name:'Краны козловые',duty:0.05,docs:[{n:'Технический паспорт / паспорт крана',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Разрешение на ввоз грузоподъёмного оборудования',r:false,cost:'5 000–20 000 ₽',who:'Ростехнадзор'}]},
+  // ── Транспортировка: Конвейеры ──
+  '8428330000':{name:'Конвейеры ленточные и пластинчатые',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8428399009':{name:'Конвейеры вибрационные и пластинчатые',duty:0.05,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8428392000':{name:'Конвейеры роликовые',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8428202000':{name:'Пневмотранспорт',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── Транспортировка: Тележки ──
+  '8427109000':{name:'Тележки рельсовые приводные',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8709119000':{name:'Тележки самоходные (ричтраки, электрокары)',duty:0.10,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8607120000':{name:'Тележки рельсовые прочие',duty:0.15,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── Термическое оборудование ──
+  '8514110000':{name:'Печи сопротивления периодического действия (камерные, шахтные, колпаковые)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8514190000':{name:'Печи сопротивления непрерывного действия (тоннельные, толкательные, конвейерные)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8514200000':{name:'Печи дуговые (электродуговые плавильные и рафинировочные)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8514310000':{name:'Печи индукционные (плавильные канальные и тигельные)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8514390000':{name:'Печи индукционные вакуумные / нагревательные установки',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8514400000':{name:'Установки электронно-лучевые (ЭЛП)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '7321110000':{name:'Печи топливные (газовые, камерные, шахтные) периодического действия',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '7321190000':{name:'Печи топливные (газовые) непрерывного действия (барабанные, проходные)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  // ── Укороченные коды (для автоматического совпадения) ──
+  '8457':{name:'Обрабатывающие центры, фрезерные и токарные станки с ЧПУ',duty:0.05,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8458':{name:'Токарные станки с ЧПУ',duty:0.05,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8459':{name:'Сверлильные, расточные, фрезерные станки',duty:0.10,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8461':{name:'Строгальные, долбёжные, зуборезные, зубошлифовальные станки',duty:0.05,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8454':{name:'Машины для литья металлов',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8474':{name:'Оборудование литейного производства (формовочное, смесительное, регенерация)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '8477':{name:'Оборудование для литья по газифицируемым моделям (ЛГМ)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8424':{name:'Оборудование очистки литья (дробемётное, абразивоструйное)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '8514':{name:'Термическое оборудование (электрические печи, индукционные установки)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'}]},
+  '7321':{name:'Термическое оборудование топливное (газовые печи)',duty:0.0,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'}]},
+  '84':{name:'Машины и механические устройства (промышленное оборудование)',duty:0.05,docs:[{n:'Технический паспорт',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Сертификат соответствия ТР ТС 010/2011',r:true,cost:'150 000–350 000 ₽',who:'Сертификационная лаборатория'},{n:'Сертификат происхождения',r:false,cost:'3 000–10 000 ₽',who:'ТПП страны отправки'}]},
+};
+
+const INC_HINTS={EXW:'Покупатель забирает товар со склада продавца и несёт все расходы с этого момента.',FCA:'Продавец передаёт товар перевозчику покупателя.',CPT:'Продавец оплачивает фрахт до места назначения. Риск при передаче первому перевозчику.',CIP:'Продавец оплачивает фрахт и страховку (повышенное покрытие) до места назначения.',DAP:'Продавец доставляет до указанного места без разгрузки и растаможки.',DPU:'Продавец доставляет и разгружает в указанном месте.',DDP:'Продавец несёт все расходы включая растаможку и пошлины.',FAS:'Только море. Продавец доставляет вдоль борта судна в порту отгрузки.',FOB:'Только море. Продавец грузит на борт. Далее — риски покупателя.',CFR:'Только море. Продавец оплачивает фрахт до порта назначения.',CIF:'Только море. Продавец оплачивает фрахт и страховку до порта назначения.'};
+
+const SEASON_EVENTS=[
+  {days_check:d=>{const m=d.getMonth()+1,dy=d.getDate();return(m===1&&dy>=20)||(m===2&&dy<=18)},price_k:1.30,days_add:12,msg:'⚠ Китайский Новый год: заводы закрыты ~3 недели. Ставки +20–30%, сроки +10–14 дней.',cn:true},
+  {days_check:d=>d.getMonth()===9&&d.getDate()<=7,price_k:1.15,days_add:5,msg:'⚠ Золотая неделя КНР (1–7 октября): задержки отгрузок.',cn:true},
+  {days_check:d=>d.getMonth()===4&&d.getDate()<=5,price_k:1.10,days_add:3,msg:'⚠ День труда КНР (1–5 мая): замедление отгрузок.',cn:true},
+  {days_check:d=>d.getMonth()===0&&d.getDate()<=10,price_k:1.10,days_add:5,msg:'⚠ Новогодние праздники РФ (1–8 января): таможня работает медленнее.',cn:false},
+  {days_check:d=>d.getMonth()===4&&d.getDate()>=1&&d.getDate()<=10,price_k:1.08,days_add:3,msg:'⚠ Майские праздники РФ: таможня замедлена.',cn:false},
+  {days_check:d=>d.getMonth()>=8&&d.getMonth()<=10,price_k:1.20,days_add:4,msg:'⚠ Пиковый сезон (сентябрь–ноябрь): ставки на море +15–20%.',sea:true},
+  {days_check:d=>d.getMonth()>=5&&d.getMonth()<=8,price_k:1.05,days_add:3,msg:'⚠ Штормовой сезон (июнь–сентябрь): возможны задержки морских рейсов.',cn:true,sea:true},
+];
+
+const CARRIERS=[
+  {name:'FESCO',email:'sales@fesco.ru',modes:['sea','rail'],checked:true},
+  {name:'РЖД Логистика',email:'info@rzdlog.ru',modes:['rail'],checked:true},
+  {name:'AsstrA',email:'ru@asstra.ru',modes:['road'],checked:true},
+  {name:'Maersk',email:'ru.sales@maersk.com',modes:['sea'],checked:true},
+  {name:'DHL Freight',email:'dhl.freight@dhl.com',modes:['road','air'],checked:false},
+  {name:'Lufthansa Cargo',email:'russia@lhcargo.com',modes:['air'],checked:false},
+];
+
+const CONTAINERS=[["20' стандартный",25,21500,'#fa4616'],["40' стандартный",55,26500,'#063e58'],["40' High Cube",67,26300,'#4c5157'],["45' High Cube",78,27600,'#9a9fa8']];
+const MN={air:'Авиа',sea:'Море',rail:'ЖД',road:'Авто'};
+const MI={air:'✈',sea:'🚢',rail:'🚂',road:'🚛'};
+
+// INIT
+const today=new Date();today.setDate(today.getDate()+3);
+document.getElementById('readydate').value=today.toISOString().split('T')[0];
+addPlace();renderCarriers();
+updateCnyRub(); // синхронизируем CNY/RUB
+// По умолчанию выбираем Море и ЖД
+['sea','rail'].forEach(function(m){selT.add(m);document.getElementById('t-'+m).classList.add('sel');});
+document.getElementById('sea-opts').style.display='block';
+setMode('tkp'); // инициализация режима — скрываем лишние блоки
+
+// TKP CALC — простой прямой расчёт
+function tkpCalc(){
+  var l=parseFloat(document.getElementById('tkp-l').value)||0;
+  var w=parseFloat(document.getElementById('tkp-w').value)||0;
+  var h=parseFloat(document.getElementById('tkp-h').value)||0;
+  var q=parseFloat(document.getElementById('tkp-q').value)||1;
+  var vol=(l&&w&&h)?(l*w*h/1000000)*q:0;
+  document.getElementById('approx-vol').value=vol.toFixed(3);
+  document.getElementById('tkp-vol-badge').textContent=vol>0?vol.toFixed(3)+' м³':'— м³';
+  var hint=document.getElementById('tkp-vol-hint');
+  var block=document.getElementById('tkp-cnt-block');
+  if(vol<=0){hint.textContent='';block.style.display='none';return;}
+  hint.textContent='Итого: '+vol.toFixed(3)+' м³ · '+q+' мест';
+  block.style.display='block';
+  var caps=[{id:'20',v:25},{id:'40',v:55},{id:'40hc',v:67},{id:'45',v:78}];
+  var bestName='';
+  caps.forEach(function(c){
+    var pct=vol/c.v*100;
+    var bar=document.getElementById('tkp-b'+c.id);
+    var lbl=document.getElementById('tkp-p'+c.id);
+    if(!bar||!lbl)return;
+    if(pct<=100){
+      bar.style.width=pct.toFixed(1)+'%';
+      bar.style.background=c.id==='20'?'#fa4616':'#4c8fa0';
+      lbl.textContent=Math.round(pct)+'% ✓';
+      lbl.style.color=c.id==='20'?'#fa4616':'rgba(255,255,255,.8)';
+      if(!bestName)bestName=c.id==='20'?"20' стандартный":c.id==='40'?"40' стандартный":c.id==='40hc'?"40' High Cube":"45' High Cube";
+    } else {
+      bar.style.width='100%';
+      bar.style.background='#e05555';
+      lbl.textContent='х'+Math.ceil(pct/100);
+      lbl.style.color='#e05555';
+    }
+  });
+  var rec=document.getElementById('tkp-cnt-rec');
+  if(rec)rec.textContent=bestName?'Рекомендован: '+bestName:'Груз не входит в стандартный контейнер';
+}
+
+// MODE
+function setMode(m){
+  appMode=m;
+  document.getElementById('btn-tkp').classList.toggle('active',m==='tkp');
+  document.getElementById('btn-ship').classList.toggle('active',m==='ship');
+  document.getElementById('mode-lbl').textContent=m==='tkp'?'Ориентировочный диапазон стоимости для коммерческого предложения':'Точный расчёт на основе документов поставщика';
+  document.getElementById('doc-sec').style.display=m==='ship'?'block':'none';
+  document.getElementById('customs-sec').style.display=m==='ship'?'block':'none';
+  document.getElementById('tkp-extra').style.display=m==='tkp'?'block':'none';
+  document.getElementById('tkp-vol-block').style.display=m==='tkp'?'block':'none';
+  document.getElementById('ship-vol-block').style.display=m==='ship'?'block':'none';
+  document.getElementById('results').classList.add('hidden');
+  document.getElementById('results').innerHTML='';
+}
+
+// PDF PARSING
+function handleFiles(files){
+  [...files].forEach(f=>{
+    if(!f.name.toLowerCase().endsWith('.pdf')){alert('Поддерживаются только PDF');return;}
+    const idx=uploadedDocs.length;
+    uploadedDocs.push({name:f.name,file:f,status:'pending',text:''});
+    renderDocList();readPDF(f,idx);
+  });
+  document.getElementById('parse-btn').style.display=uploadedDocs.length?'block':'none';
+}
+
+async function readPDF(file,idx){
+  try{
+    const ab=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:ab}).promise;
+    let text='';
+    for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i);const tc=await page.getTextContent();text+=tc.items.map(it=>it.str).join(' ')+'\n';}
+    uploadedDocs[idx].text=text;
+    uploadedDocs[idx].status=text.trim().length>50?'read':'empty';
+    renderDocList();
+  }catch(e){uploadedDocs[idx].status='err';renderDocList();}
+}
+
+function renderDocList(){
+  document.getElementById('doc-list').innerHTML=uploadedDocs.map((d,i)=>`
+    <div class="doc-item">
+      <span class="doc-icon">📄</span>
+      <span class="doc-name" title="${d.name}">${d.name}</span>
+      <span class="doc-status ${d.status==='read'?'ds-read':d.status==='pending'?'ds-pending':'ds-err'}">${d.status==='read'?'Прочитан':d.status==='pending'?'Загрузка...':'Ошибка'}</span>
+      <button class="doc-rm" onclick="removeDoc(${i})">×</button>
+    </div>`).join('');
+  document.getElementById('parse-btn').style.display=uploadedDocs.some(d=>d.status==='read')?'block':'none';
+}
+
+function removeDoc(i){uploadedDocs.splice(i,1);renderDocList();}
+
+async function parseAllDocs(){
+  const btn=document.getElementById('parse-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Читаю документы...';
+  const allText=uploadedDocs.filter(d=>d.status==='read').map(d=>d.text).join('\n\n---\n\n');
+  const extracted=extractFromText(allText);
+  btn.disabled=false;btn.innerHTML='📖 Прочитать документы и заполнить поля';
+  applyExtracted(extracted);
+}
+
+function extractFromText(text){
+  const res={};
+  const t=text.replace(/\s+/g,' ');
+
+  // Вес
+  for(const p of[/gross\s*weight[:\s]*([0-9,\.]+)\s*(kg|кг)/i,/total\s*gross[:\s]*([0-9,\.]+)\s*(kg|кг)/i,/G\.W\.[:\s]*([0-9,\.]+)\s*(kg|кг)?/i,/weight[:\s]*([0-9,\.]+)\s*(kg|кг)/i]){
+    const m=t.match(p);if(m){const v=parseFloat(m[1].replace(/,/g,''));if(v>0&&v<100000){res.weight=v;break;}}
+  }
+
+  // Объём
+  for(const p of[/total\s*volume[:\s]*([0-9,\.]+)\s*(m3|м3|cbm|куб)/i,/([0-9,\.]+)\s*CBM/i,/volume[:\s]*([0-9,\.]+)/i]){
+    const m=t.match(p);if(m){const v=parseFloat(m[1].replace(/,/g,''));if(v>0&&v<1000){res.volume=v;break;}}
+  }
+
+  // Габариты
+  for(const p of[/(\d+)\s*[x×\*]\s*(\d+)\s*[x×\*]\s*(\d+)\s*(mm|мм)/i,/(\d+)\s*[x×\*]\s*(\d+)\s*[x×\*]\s*(\d+)\s*(cm|см)/i,/L[:\s]*(\d+)[,\s\*]+W[:\s]*(\d+)[,\s\*]+H[:\s]*(\d+)/i,/(\d{3,4})\s*[x×]\s*(\d{3,4})\s*[x×]\s*(\d{3,4})/]){
+    const m=t.match(p);
+    if(m){
+      let l=+m[1],w=+m[2],h=+m[3];
+      const unit=(m[4]||'').toLowerCase();
+      if(unit==='mm'||unit==='мм'){l=Math.round(l/10);w=Math.round(w/10);h=Math.round(h/10);}
+      if(l>5&&w>5&&h>5){res.dims={l,w,h};break;}
+    }
+  }
+
+  // Стоимость
+  for(const p of[/total\s*amount[:\s]*([0-9,\.]+)\s*(USD|CNY|EUR|RMB)/i,/invoice\s*(total|amount)[:\s]*([0-9,\.]+)/i,/([0-9,\.]+)\s*(USD|CNY|EUR|RMB)/i]){
+    const m=t.match(p);
+    if(m){
+      const nums=[...m].filter(x=>x&&/^\d/.test(x)&&parseFloat(x.replace(/,/g,''))>100);
+      if(nums.length){
+        res.price=parseFloat(nums[0].replace(/,/g,''));
+        const cs=[...m].find(x=>x&&/(USD|CNY|EUR|RMB)/i.test(x));
+        res.currency=cs?(/CNY|RMB/i.test(cs)?'CNY':/EUR/i.test(cs)?'EUR':'USD'):'USD';
+        break;
+      }
+    }
+  }
+
+  // ТН ВЭД
+  for(const p of[/HS\s*[Cc]ode[:\s]*([0-9]{4}[\s0-9]{0,8})/i,/тн\s*вэд[:\s]*([0-9]{4}[\s0-9]{0,8})/i]){
+    const m=t.match(p);if(m){res.tnved=m[1].replace(/\s/g,'').substring(0,10);break;}
+  }
+
+  // Кол-во мест
+  for(const p of[/total\s*(packages?|cartons?|pcs|pieces?)[:\s]*([0-9]+)/i,/([0-9]+)\s*(packages|cartons|pcs)/i]){
+    const m=t.match(p);if(m){const n=+(m[2]||m[1]);if(n>0&&n<10000){res.qty=n;break;}}
+  }
+
+  // Номер инвойса
+  for(const p of[/invoice\s*(no|nr|#|number|num)[\.:\s]*([A-Z0-9\-\/]+)/i,/inv[\.:\s#]*([A-Z0-9\-\/]+)/i]){
+    const m=t.match(p);if(m){res.invoiceNo=(m[2]||m[1]);break;}
+  }
+
+  return res;
+}
+
+function applyExtracted(ex){
+  const items=[];
+  if(ex.weight){document.getElementById('weight').value=ex.weight;items.push({l:'Вес',v:ex.weight+' кг'});}
+  if(ex.price){
+    document.getElementById('cargovalue').value=ex.price;
+    if(ex.currency)document.getElementById('cargo-cur').value=ex.currency;
+    items.push({l:'Стоимость',v:ex.price.toLocaleString('ru')+' '+(ex.currency||'USD')});
+    updateCargoHint();
+  }
+  if(ex.tnved){document.getElementById('tnved').value=ex.tnved;onTnved();items.push({l:'ТН ВЭД',v:ex.tnved});}
+  if(ex.dims){
+    const rows=document.querySelectorAll('#places-list .dim-row');
+    if(rows.length>0){
+      const ins=rows[0].querySelectorAll('input');
+      ins[0].value=ex.dims.l;ins[1].value=ex.dims.w;ins[2].value=ex.dims.h;
+      if(ex.qty)ins[3].value=ex.qty;
+      updateSummary();
+    }
+    items.push({l:'Габариты',v:`${ex.dims.l}×${ex.dims.w}×${ex.dims.h} см`});
+  } else if(ex.volume){
+    switchVTab('manual',document.querySelectorAll('.vtab')[1]);
+    document.getElementById('vol-m').value=ex.volume;
+    if(ex.qty)document.getElementById('places-m').value=ex.qty;
+    updateSummary();
+    items.push({l:'Объём',v:ex.volume+' м³'});
+  }
+  if(ex.qty)items.push({l:'Мест',v:ex.qty});
+  if(ex.invoiceNo)items.push({l:'Инвойс №',v:ex.invoiceNo});
+
+  const res=document.getElementById('extracted-result');
+  if(items.length){
+    res.innerHTML=`<div class="extracted-fields"><div class="ef-title">✓ Данные извлечены из документов</div><div class="ef-grid">${items.map(it=>`<div class="ef-item"><div class="ef-label">${it.l}</div><div class="ef-val">${it.v}</div></div>`).join('')}</div><div style="font-size:10px;color:var(--ok);margin-top:7px;font-weight:500">Проверьте и скорректируйте при необходимости</div></div>`;
+  } else {
+    res.innerHTML=`<div class="warn-box">Не удалось автоматически извлечь данные. Документ может быть сканом — заполните поля вручную.</div>`;
+  }
+}
+
+// Drag&drop
+const ua=document.getElementById('upload-area');
+ua.addEventListener('dragover',e=>{e.preventDefault();ua.classList.add('drag');});
+ua.addEventListener('dragleave',()=>ua.classList.remove('drag'));
+ua.addEventListener('drop',e=>{e.preventDefault();ua.classList.remove('drag');handleFiles(e.dataTransfer.files);});
+
+// CURRENCY
+function setCur(c){curSel=c;['USD','RUB','CNY','EUR'].forEach(x=>document.getElementById('cur-'+x).classList.toggle('sel',x===c));}
+function getRates(){return{rub:+document.getElementById('r-rub').value||91,cny:+document.getElementById('r-cny').value||7.24,eur:+document.getElementById('r-eur').value||0.92};}
+function fmtC(usd){const{rub,cny,eur}=getRates(),n=Math.round(usd);if(curSel==='RUB')return Math.round(n*rub).toLocaleString('ru')+' ₽';if(curSel==='CNY')return Math.round(n*cny).toLocaleString('ru')+' ¥';if(curSel==='EUR')return Math.round(n*eur).toLocaleString('ru')+' €';return '$'+n.toLocaleString('ru');}
+function getCargoUSD(){const v=+document.getElementById('cargovalue').value||0,c=document.getElementById('cargo-cur').value,{rub,cny,eur}=getRates();return c==='CNY'?v/cny:c==='EUR'?v/eur:c==='RUB'?v/rub:v;}
+function updateCargoHint(){const v=+document.getElementById('cargovalue').value||0,c=document.getElementById('cargo-cur').value,usd=getCargoUSD();document.getElementById('cargo-hint').textContent=v&&c!=='USD'?`≈ $${Math.round(usd).toLocaleString('ru')} USD по курсу · для расчёта пошлины и страховки. Курс ЦБ на дату ДТ может отличаться.`:'Введите сумму из инвойса в любой валюте — пересчитаем в USD для таможни';}
+document.getElementById('cargovalue').addEventListener('input',updateCargoHint);
+
+// ROUTE
+function getRouteBase(f){return BASE_ROUTES[CN_GROUP[f]||f];}
+function updateRoute(){
+  const f=document.getElementById('from').value,t=document.getElementById('to').value;
+  const el=document.getElementById('route-info');
+  if(!f||!t){el.className='hidden';return;}
+  const br=getRouteBase(f);
+  if(!br){el.className='info-box';el.textContent='Маршрут не найден — запросим ставки вручную.';return;}
+  const cm=CITY_META[t]||{};
+  const avail=['air','sea','rail','road'].filter(m=>br[m]).map(m=>({air:'авиа',sea:'море',rail:'ЖД',road:'авто'}[m]));
+  el.className='info-box';
+  el.textContent='Маршрут найден. Доступно: '+avail.join(', ')+(cm.wh?' · Доставка на склад СЛТ (Тверь).':'')+(cm.add>0.3?' · Дальний регион.':'');
+  checkSeason();
+}
+function getActiveSeason(dateStr,fromKey){
+  if(!dateStr)return null;
+  const d=new Date(dateStr),isCN=!!(CN_GROUP[fromKey]||fromKey?.startsWith('CN'));
+  for(const ev of SEASON_EVENTS){if(ev.cn&&!isCN)continue;if(ev.days_check(d))return ev;}
+  return null;
+}
+function checkSeason(){
+  const ev=getActiveSeason(document.getElementById('readydate').value,document.getElementById('from').value);
+  const el=document.getElementById('season-alert');
+  el.className=ev?'season-warn':'hidden';if(ev)el.textContent=ev.msg;
+}
+
+// TNVED / INC / CUSTOMS
+function onTnved(){
+  const raw=document.getElementById('tnved').value;
+  const drop=document.getElementById('tnved-drop');
+  const hint=document.getElementById('tnved-hint');
+  const q=raw.trim().toLowerCase();
+
+  // Если пусто — скрыть
+  if(!q){drop.style.display='none';hint.textContent='';return;}
+
+  // Сначала пробуем найти по коду (только цифры)
+  const isCode=/^[\d\s]+$/.test(raw);
+  if(isCode){
+    const m=findTnved(raw);
+    drop.style.display='none';
+    hint.textContent=m?`→ ${m.name} · пошлина ${Math.round(m.duty*100)}%`:'Код не найден в базе СЛТ — см. подсказку ниже';
+    if(!m)showTnvedHelp(raw);
+    return;
+  }
+
+  // Поиск по названию из TNVED_MAP
+  const results=Object.entries(TNVED_MAP)
+    .filter(([code,info])=>info.name.toLowerCase().includes(q))
+    .sort((a,b)=>b[0].length-a[0].length); // длинные коды (точнее) — вверх
+
+  if(!results.length){
+    drop.style.display='none';
+    hint.innerHTML='Позиция не найдена в базе СЛТ. <span style="color:var(--orange);cursor:pointer;font-weight:700" onclick="showTnvedHelp(\''+raw+'\')">Что делать?</span>';
+    return;
+  }
+
+  drop.innerHTML=results.map(([code,info])=>
+    `<div class="city-opt" onmousedown="event.preventDefault();selectTnved('${code}','${info.name}')">
+      <b style="color:var(--navy)">${code}</b>
+      <span class="city-region">${info.name}</span>
+      <span style="float:right;font-size:10px;color:var(--orange);font-weight:700">пошлина ${Math.round(info.duty*100)}%</span>
+    </div>`
+  ).join('');
+  drop.style.display='block';
+}
+
+function selectTnved(code,name){
+  document.getElementById('tnved').value=code;
+  hideDrop('tnved-drop');
+  document.getElementById('tnved-hint').textContent=`→ ${name} · пошлина ${Math.round((findTnved(code)?.duty||0)*100)}%`;
+}
+
+function showTnvedHelp(q){
+  const hint=document.getElementById('tnved-hint');
+  hint.innerHTML=`<div style="margin-top:6px;background:var(--warn-bg);border-left:3px solid var(--warn);border-radius:var(--r);padding:8px 12px;line-height:1.7">
+    <b style="color:var(--warn)">Позиция не найдена в базе СЛТ</b><br>
+    Варианты действий:<br>
+    1. Уточните код у поставщика — в инвойсе или контракте он может быть указан как HS Code.<br>
+    2. Воспользуйтесь <a href="https://www.alta.ru/tnved/" target="_blank" style="color:var(--navy)">поиском по ТН ВЭД на alta.ru</a> или <a href="https://tnved.online/" target="_blank" style="color:var(--navy)">tnved.online</a>.<br>
+    3. Обратитесь к таможенному брокеру — он определит код бесплатно при оформлении.<br>
+    4. Если оборудование похоже на то что СЛТ уже возила — напишите <a href="mailto:qc@sltgroup.ru" style="color:var(--orange)">qc@sltgroup.ru</a>, подберём из истории.
+  </div>`;
+}
+
+function findTnved(raw){const t=(raw||'').replace(/\s/g,'');for(const len of[10,8,4,2]){const key=t.substring(0,len);if(TNVED_MAP[key])return TNVED_MAP[key];}return null;}
+function getDuty(tnvedRaw,cargoUSD,incoterms){const info=findTnved(tnvedRaw);if(!info||!cargoUSD)return{duty:0,vat:0,total:0,rate:info?info.duty:null,docs:[],name:info?info.name:''};if(incoterms==='DDP')return{duty:0,vat:0,total:0,rate:info.duty,docs:info.docs||[],name:info.name};const d=cargoUSD*info.duty,v=(cargoUSD+d)*0.20;return{duty:d,vat:v,total:d+v,rate:info.duty,docs:info.docs||[],name:info.name};}
+function onIncoterms(){document.getElementById('inc-hint').textContent=INC_HINTS[document.getElementById('incoterms').value]||'';}
+function updateCustomsHint(){document.getElementById('cust-hint').textContent=CUSTOMS_HINTS[document.getElementById('customs-pt').value]||'';}
+
+// DELIVERY
+function autoVehicle(w,v){if(w<=1500&&v<=9)return{type:'Газель (до 1.5 т / 9 м³)',rate:0.10};if(w<=5000&&v<=36)return{type:'Среднетоннажный (до 5 т)',rate:0.07};if(w<=20000&&v<=82)return{type:'Фура (до 20 т)',rate:0.045};return{type:'Сцепка / несколько авто',rate:0.038};}
+function delFromSearch(q){
+  const drop=document.getElementById('del-from-drop');
+  if(!drop)return;
+  const lq=(q||'').toLowerCase().trim();
+  const res=lq.length<1
+    ?CITY_LIST.filter(c=>DL_TERMINAL_CODES[c.v.replace('RU_','')])
+    :CITY_LIST.filter(c=>c.n.toLowerCase().includes(lq)&&DL_TERMINAL_CODES[c.v.replace('RU_','')]);
+  if(!res.length){
+    drop.innerHTML='<div class="city-opt" style="color:var(--t3);cursor:default">Город не найден</div>';
+    drop.style.display='block';return;
+  }
+  drop.innerHTML=res.map(c=>`<div class="city-opt" onmousedown="event.preventDefault();selectFromCity('${c.v}','${c.n}')">${c.n}<span class="city-region">${c.r}</span></div>`).join('');
+  drop.style.display='block';
+}
+function selectFromCity(val,name){
+  const key=val.replace('RU_','');
+  document.getElementById('del-from').value=key;
+  document.getElementById('del-from-input').value=name;
+  hideDrop('del-from-drop');
+  updateDelHint();
+}
+
+function delCitySearch(q){
+  const drop=document.getElementById('del-city-drop');
+  if(!drop)return;
+  const lq=(q||'').toLowerCase().trim();
+  const res=lq.length<1
+    ?CITY_LIST.filter(c=>DEL_CITIES[c.v.replace('RU_','')])
+    :CITY_LIST.filter(c=>c.n.toLowerCase().includes(lq)&&DEL_CITIES[c.v.replace('RU_','')]);
+  if(!res.length){
+    drop.innerHTML='<div class="city-opt" style="color:var(--t3);cursor:default">Город не найден</div>';
+    drop.style.display='block';return;
+  }
+  drop.innerHTML=res.map(c=>`<div class="city-opt" onmousedown="event.preventDefault();selectDelCity('${c.v}','${c.n}')">${c.n}<span class="city-region">${c.r}</span></div>`).join('');
+  drop.style.display='block';
+}
+function selectDelCity(val,name){
+  const key=val.replace('RU_','');
+  document.getElementById('del-city').value=key;
+  document.getElementById('del-city-input').value=name;
+  hideDrop('del-city-drop');
+  updateDelHint();
+}
+function updateDelHint(){
+  const city=document.getElementById('del-city').value;
+  const hint=document.getElementById('del-hint');
+  if(!city){hint.textContent='Начните вводить город — покажем стоимость, тип ТС и срок';return;}
+  const c=DEL_CITIES[city];
+  if(!c){hint.textContent='Город не найден в справочнике';return;}
+  const w=+document.getElementById('weight').value||0,v=getVol(),veh=autoVehicle(w,v),cost=Math.round(c.km*veh.rate);
+  const fromName=document.getElementById('del-from-input').value||'Тверь';
+  hint.textContent=`${fromName} → ${c.name} · ${c.km.toLocaleString('ru')} км · ${veh.type} · ~${fmtC(cost)} · ${c.days} дн.`;
+  // Запрашиваем реальную ставку ДЛ если выбрана Москва/МО как пункт назначения
+  fetchDellinRate();
+}
+
+// ====== ДЕЛОВЫЕ ЛИНИИ API ======
+const DL_APP_KEY='CDDDBDBE-AE59-4038-8EDE-F87E7DB46605';
+const DL_LOGIN='+79853897083';
+const DL_PASS='Slt2026';
+let dlSessionId=null;
+let dlSessionExpires=null;
+
+// Коды терминалов ДЛ для городов
+const DL_TERMINAL_CODES={
+  MSK:297,   // Москва Юг 2
+  SPB:1,     // Санкт-Петербург Парнас
+  VRN:16,    // Воронеж
+  EKB:89,    // Екатеринбург Чкаловский
+  NOV:52,    // Новосибирск
+  KAZ:28,    // Казань
+  RST:77,    // Ростов-на-Дону Сельмаш
+  UFA:107,   // Уфа Дёма
+  KRD:388,   // Краснодар Север 3
+  SAM:20,    // Самара
+  PRM:413,   // Пермь Промышленная
+  CHE:699,   // Челябинск Потанино
+  NIZ:296,   // Нижний Новгород
+  IZH:59,    // Ижевск
+  YAR:25,    // Ярославль
+  KRS:47,    // Красноярск
+  IRK:83,    // Иркутск
+  TYM:51,    // Тюмень
+  VOL:6,     // Волгоград
+  OMK:53,    // Омск
+  BRN:63,    // Барнаул
+  NVK:79,    // Новокузнецк
+  KHB:106,   // Хабаровск
+  VLD:295,   // Владивосток
+  TOM:74,    // Томск
+  ABK:122,   // Абакан
+  CHT:104,   // Чита
+  MUR:49,    // Мурманск
+  ARH:30,    // Архангельск
+  TVR:105,   // Тверь
+  SAR:21,    // Саратов
+  PNZ:54,    // Пенза
+  ULY:70,    // Ульяновск
+  NAB:57,    // Набережные Челны
+  KGN:71,    // Курган
+  TLT:120,   // Тольятти
+  SUR:61,    // Сургут
+  SPB2:319,  // Санкт-Петербург Шушары
+  KZN:266,   // Казань Химград
+  EKB2:256,  // Екатеринбург Эльмаш
+};
+
+async function dlGetSession(){
+  // Если есть живая сессия — возвращаем её
+  if(dlSessionId && dlSessionExpires && new Date()<dlSessionExpires){
+    return dlSessionId;
+  }
+  try{
+    const resp=await fetch('https://silent-fire-dd3e.mosxino.workers.dev/login',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({appkey:DL_APP_KEY,login:DL_LOGIN,password:DL_PASS})
+    });
+    const text=await resp.text();
+    let data;
+    try{data=JSON.parse(text);}catch(e){throw new Error('Ответ не JSON: '+text.substring(0,100));}
+    if(!resp.ok)throw new Error('HTTP '+resp.status+': '+JSON.stringify(data));
+    if(data.sessionID){
+      dlSessionId=data.sessionID;
+      dlSessionExpires=new Date(Date.now()+29*24*60*60*1000);
+      return dlSessionId;
+    }
+    throw new Error('Ответ ДЛ: '+JSON.stringify(data));
+  }catch(e){
+    // Показываем ошибку прямо на экране
+    const dlResult=document.getElementById('dl-rate-result');
+    if(dlResult)dlResult.innerHTML='<div style="color:var(--warn);font-size:11px;background:#fff3f3;border:1px solid #fcc;border-radius:4px;padding:8px">⚠ Ошибка авторизации ДЛ:<br><code style="font-size:10px">'+e.message+'</code></div>';
+    return null;
+  }
+}
+
+async function fetchDellinRate(){
+  const dlResult=document.getElementById('dl-rate-result');
+  const cityKey=document.getElementById('del-city').value;
+  if(!cityKey){
+    if(dlResult)dlResult.innerHTML='<span style="color:var(--warn);font-size:11px">⚠ Выберите город назначения</span>';
+    return;
+  }
+  const termTo=DL_TERMINAL_CODES[cityKey];
+  if(!termTo){
+    if(dlResult)dlResult.innerHTML='<span style="color:var(--warn);font-size:11px">⚠ Для этого города нет терминала ДЛ</span>';
+    return;
+  }
+  const weight=+document.getElementById('weight').value||0;
+  const vol=getVol();
+  if(!weight||weight<1){
+    if(dlResult)dlResult.innerHTML='<span style="color:var(--warn);font-size:11px">⚠ Укажите вес груза в разделе 02</span>';
+    return;
+  }
+  const dlBtn=document.getElementById('dl-rate-btn');
+  if(dlResult)dlResult.innerHTML='<span style="color:var(--t3);font-size:11px"><span class="spinner" style="border-top-color:var(--orange)"></span> Запрашиваем ставку Деловых Линий...</span>';
+
+  const sid=await dlGetSession();
+  if(!sid){
+    if(dlResult)dlResult.innerHTML='<span style="color:var(--warn);font-size:11px">⚠ Не удалось подключиться к API Деловых Линий</span>';
+    return;
+  }
+
+  try{
+    // Терминал отправки — Тверь (склад СЛТ) или Москва
+    const fromKey=document.getElementById('del-from').value||'TVR';
+    const termFrom=DL_TERMINAL_CODES[fromKey];
+    if(!termFrom){
+      if(dlResult)dlResult.innerHTML='<span style="color:var(--warn);font-size:11px">⚠ Выберите город отправки</span>';
+      return;
+    }
+
+    const today=new Date();
+    const dd=String(today.getDate()).padStart(2,'0');
+    const mm=String(today.getMonth()+1).padStart(2,'0');
+    const yyyy=today.getFullYear();
+    const produceDate=yyyy+'-'+mm+'-'+dd;
+    // Если объём не задан — минимум 0.1 м³
+    const safeVol=Math.max(vol||0.1, 0.001);
+    const rawL=parseFloat(document.getElementById('tkp-l').value)||0;
+    const rawW=parseFloat(document.getElementById('tkp-w').value)||0;
+    const rawH=parseFloat(document.getElementById('tkp-h').value)||0;
+    const cbrt=parseFloat(Math.cbrt(safeVol).toFixed(2));
+    const mL=rawL>0?Math.min(rawL/100,2.99):Math.min(cbrt,2.99);
+    const mW=rawW>0?Math.min(rawW/100,2.42):Math.min(cbrt,2.42);
+    const mH=rawH>0?Math.min(rawH/100,2.45):Math.min(cbrt,2.45);
+    const body={
+      sessionID:sid,
+      appkey:DL_APP_KEY,
+      delivery:{
+        deliveryType:{type:'auto'},
+        arrival:{variant:'terminal',terminalID:parseInt(termTo)},
+        derival:{variant:'terminal',terminalID:parseInt(termFrom),produceDate:produceDate}
+      },
+      cargo:{
+        quantity:Math.max(getPC()||1,1),
+        weight:Math.max(weight,1),
+        length:Math.max(mL,0.1),
+        width:Math.max(mW,0.1),
+        height:Math.max(mH,0.1),
+        totalVolume:safeVol,
+        totalWeight:Math.max(weight,1),
+        oversized:{oversizedVolume:0,oversizedWeight:0}
+      }
+    };
+
+    const resp=await fetch('https://silent-fire-dd3e.mosxino.workers.dev/calculator',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+
+    if(!resp.ok){
+      const errText=await resp.text();
+      throw new Error('HTTP '+resp.status+': '+errText.substring(0,300));
+    }
+    const data=await resp.json();
+
+    // Ответ v2: data.intercity.price + data.arrival.price (за приём/выдачу)
+    // data.data.price = итоговая цена ДЛ включая страховку и доп услуги
+    const totalPrice = data.data && data.data.price ? Math.round(data.data.price) : null;
+    const intercityPrice = data.data && data.data.intercity ? data.data.intercity.price : null;
+    const days = data.data && data.data.orderDates ? data.data.orderDates.arrivalToOspReceiver : '?';
+
+    if(totalPrice !== null && totalPrice > 0){
+      const fromName=document.getElementById('del-from-input').value||'Откуда';
+      const toName=document.getElementById('del-city-input').value||'Куда';
+      const rub=getRates().rub||91;
+      const usd=Math.round(totalPrice/rub);
+      const extras=intercityPrice?Math.round(totalPrice-intercityPrice):0;
+      const daysStr=days&&days!='?'?days.substring(0,10):'?';
+      if(dlResult)dlResult.innerHTML=`
+        <div style="background:var(--ok-bg);border:1px solid rgba(31,122,80,.2);border-left:3px solid var(--ok);border-radius:var(--r);padding:9px 13px;margin-top:8px">
+          <div style="font-size:10px;font-weight:700;color:var(--ok);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px">✓ Реальная ставка Деловых Линий</div>
+          <div style="font-size:18px;font-weight:800;color:var(--navy)">${totalPrice.toLocaleString('ru')} ₽</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:4px;display:flex;gap:12px;flex-wrap:wrap">
+            <span>Фрахт: ${intercityPrice?Math.round(intercityPrice).toLocaleString('ru')+' ₽':'—'}</span>
+            ${extras>0?`<span>Страховка и услуги: ${extras.toLocaleString('ru')} ₽</span>`:''}
+            <span>≈ $${usd.toLocaleString('ru')}</span>
+          </div>
+          <div style="font-size:11px;color:var(--t2);margin-top:2px">${fromName} → ${toName} · Прибытие: ${daysStr}</div>
+          <div style="font-size:10px;color:var(--t3);margin-top:4px;font-weight:500">Данные из API Деловых Линий · ${new Date().toLocaleTimeString('ru')}</div>
+        </div>`;
+    } else if(data.errors){
+      const errs=data.errors.map(e=>e.title||e.text||JSON.stringify(e)).join('; ');
+      if(dlResult)dlResult.innerHTML=`<span style="color:var(--warn);font-size:11px">⚠ ДЛ: ${errs}</span>`;
+    } else {
+      if(dlResult)dlResult.innerHTML=`<span style="color:var(--t3);font-size:11px">Ставка не найдена по этому направлению</span>`;
+    }
+  }catch(e){
+    console.warn('[ДЛ] Ошибка калькулятора:',e.message);
+    if(dlResult)dlResult.innerHTML=`<span style="color:var(--warn);font-size:11px">⚠ Ошибка API: ${e.message}</span>`;
+  }
+}
+// ====== КОНЕЦ ДЕЛОВЫЕ ЛИНИИ API ======
+
+// VOL
+function switchVTab(t,btn){vTab=t;['dims','manual','oversize'].forEach(x=>document.getElementById('tab-'+x).classList.toggle('hidden',x!==t));document.querySelectorAll('.vtab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');updateSummary();}
+function addPlace(){
+  const id=++pid;places.push({id});
+  const div=document.createElement('div');div.className='dim-row';div.id='pl-'+id;
+  div.innerHTML=`<div style="display:flex;align-items:center;gap:4px;flex:1">
+    <input type="number" inputmode="numeric" placeholder="Д" min="1" style="width:58px;text-align:center;background:var(--white)" oninput="updateSummary()">
+    <span class="dsep">×</span>
+    <input type="number" inputmode="numeric" placeholder="Ш" min="1" style="width:58px;text-align:center;background:var(--white)" oninput="updateSummary()">
+    <span class="dsep">×</span>
+    <input type="number" inputmode="numeric" placeholder="В" min="1" style="width:58px;text-align:center;background:var(--white)" oninput="updateSummary()">
+  </div>
+  <input type="number" inputmode="numeric" placeholder="1" min="1" value="1" style="width:48px;text-align:center;background:var(--white)" oninput="updateSummary()">
+  <span class="dbadge" id="pv-${id}">— м³</span>
+  <button class="drm" onclick="rmPlace(${id})">×</button>
+  <div id="os-warn-${id}" style="display:none;width:100%;margin-top:4px;font-size:10px;color:var(--warn);font-weight:600;background:var(--warn-bg);border-radius:var(--r);padding:4px 8px;border-left:2px solid var(--warn)"></div>`;
+  document.getElementById('places-list').appendChild(div);updateSummary();
+}
+function rmPlace(id){places.splice(places.findIndex(p=>p.id===id),1);document.getElementById('pl-'+id)?.remove();updateSummary();}
+function getPlacesData(){return places.map(p=>{const r=document.getElementById('pl-'+p.id);if(!r)return null;const ins=r.querySelectorAll('input');const l=+ins[0].value||0,w=+ins[1].value||0,h=+ins[2].value||0,q=+ins[3].value||1;return{id:p.id,l,w,h,q,vol:l&&w&&h?(l*w*h/1000000)*q:0};}).filter(Boolean);}
+
+function checkOversized(pd){
+  // Проверяем каждое место на негабарит
+  pd.forEach(p=>{
+    const warn=document.getElementById('os-warn-'+p.id);
+    if(!warn)return;
+    const issues=[];
+    if(p.l>300)issues.push(`длина ${p.l} см (>300 см)`);
+    if(p.w>240)issues.push(`ширина ${p.w} см (>240 см)`);
+    if(p.h>240)issues.push(`высота ${p.h} см (>240 см)`);
+    if(issues.length>0){
+      warn.style.display='block';
+      warn.innerHTML=`⚠ Негабарит: ${issues.join(', ')} — применяется надбавка к стоимости. Для точного расчёта перейдите на вкладку <b>«Негабарит»</b>.`;
+    } else {
+      warn.style.display='none';
+    }
+  });
+}
+
+function updateContainerHint(vol){
+  // Обновляем оба блока — tkp и ship одновременно
+  const pairs=[
+    {hint:'cnt-hint-tkp', bars:'cnt-bars-tkp', rec:'cnt-rec-tkp'},
+    {hint:'cnt-hint',     bars:'cnt-bars',     rec:'cnt-rec'}
+  ];
+  pairs.forEach(({hint:hid,bars:bid,rec:rid})=>{
+    const hint=document.getElementById(hid);
+    if(!hint)return;
+    if(!vol||vol<=0){hint.style.display='none';return;}
+    const bars=document.getElementById(bid);
+    const rec=document.getElementById(rid);
+    if(!bars||!rec)return;
+    hint.style.display='block';
+    bars.innerHTML=CONTAINERS.map(([name,maxVol,,color])=>{
+      const pct=Math.round(vol/maxVol*100);
+      const fits=pct<=100;
+      const barPct=Math.min(100,pct);
+      const needed=Math.ceil(vol/maxVol);
+      return`<div style="display:flex;align-items:center;gap:9px;margin-bottom:2px">
+        <div style="font-size:10px;color:rgba(255,255,255,.5);font-weight:600;width:130px;flex-shrink:0">${name}</div>
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;position:relative">
+          <div style="height:100%;width:${barPct}%;background:${fits?color:'#e05555'};border-radius:3px;transition:width .3s"></div>
+          ${!fits?`<div style="position:absolute;top:0;right:0;height:100%;width:2px;background:#fff;opacity:.4"></div>`:''}
+        </div>
+        <div style="font-size:10px;font-weight:700;width:90px;text-align:right;color:${fits?color:'#e05555'};white-space:nowrap">
+          ${fits?`${pct}% ✓`:`${pct}% — нужно ${needed} шт.`}
+        </div>
+      </div>`;
+    }).join('');
+    const best=CONTAINERS.find(([,mv])=>vol<=mv);
+    if(best){
+      rec.innerHTML=`→ Рекомендован <b style="color:#fff">${best[0]}</b> (${Math.round(vol/best[1]*100)}% заполнения)`;
+    } else {
+      const needed=Math.ceil(vol/67);
+      rec.innerHTML=`<span style="color:#e05555">⚠ Груз не входит в стандартный контейнер. Потребуется ${needed} × 40' High Cube.</span>`;
+    }
+  });
+}
+
+function updateSummary(){
+  const wt=+document.getElementById('weight').value||0;
+  if(vTab==='dims'){
+    const pd=getPlacesData(),tv=pd.reduce((s,p)=>s+p.vol,0),tp=pd.reduce((s,p)=>s+p.q,0),vw=Math.round(tv*167),cw=wt?Math.max(wt,vw):vw;
+    pd.forEach(p=>{const b=document.getElementById('pv-'+p.id);if(b)b.textContent=p.vol>0?p.vol.toFixed(3)+' м³':'— м³';});
+    document.getElementById('s-pl').textContent=tp;
+    document.getElementById('s-vol').textContent=tv.toFixed(3)+' м³';
+    document.getElementById('s-vw').textContent=vw.toLocaleString('ru')+' кг';
+    document.getElementById('s-cw').textContent=wt&&vw?cw.toLocaleString('ru')+' кг':'—';
+    checkOversized(pd);
+    updateContainerHint(tv);
+  }
+  if(vTab==='manual'){const vol=+document.getElementById('vol-m').value||0,vw=Math.round(vol*167),cw=wt?Math.max(wt,vw):vw;document.getElementById('man-vw').textContent=vol>0?`Объёмный вес: ${vw.toLocaleString('ru')} кг${wt?' · Расч. вес: '+cw.toLocaleString('ru')+' кг':''}`:'';}
+  if(vTab==='oversize'){const l=+document.getElementById('os-l').value||0,w=+document.getElementById('os-w').value||0,h=+document.getElementById('os-h').value||0,q=+document.getElementById('os-qty').value||1,vol=l&&w&&h?(l*w*h/1000000)*q:0;document.getElementById('os-vi').textContent=vol>0?`Объём: ${vol.toFixed(3)} м³`:'';
+  }
+  if(document.getElementById('del-city').value)updateDelHint();
+}
+function updateCnyRub(){
+  const rub=+document.getElementById('r-rub').value||91;
+  const cny=+document.getElementById('r-cny').value||7.24;
+  const cnyrub=document.getElementById('r-cnyrub');
+  if(cnyrub)cnyrub.value=(rub/cny).toFixed(2);
+}
+function updateFromCnyRub(){
+  const cnyrub=+document.getElementById('r-cnyrub').value||12.57;
+  const cny=+document.getElementById('r-cny').value||7.24;
+  const rub=document.getElementById('r-rub');
+  if(rub)rub.value=(cnyrub*cny).toFixed(1);
+}
+
+// TKP — одна строка габаритов (без кнопки добавить)
+
+function getVol(){
+  if(appMode==='tkp'){
+    return parseFloat(document.getElementById('approx-vol').value)||0;
+    const tv=pd.reduce((s,p)=>s+p.vol,0);
+    if(tv>0)return tv;
+    return+document.getElementById('approx-vol').value||0;
+  }if(vTab==='dims')return getPlacesData().reduce((s,p)=>s+p.vol,0);if(vTab==='manual')return+document.getElementById('vol-m').value||0;const l=+document.getElementById('os-l').value||0,w=+document.getElementById('os-w').value||0,h=+document.getElementById('os-h').value||0,q=+document.getElementById('os-qty').value||1;return l&&w&&h?(l*w*h/1000000)*q:0;}
+function getPC(){
+  if(appMode==='tkp'){
+    return parseFloat(document.getElementById('tkp-q').value)||1;
+  }if(vTab==='dims')return getPlacesData().reduce((s,p)=>s+p.q,0);if(vTab==='manual')return+document.getElementById('places-m').value||1;return+document.getElementById('os-qty').value||1;}
+
+// LOADING
+function getLoadingCoeff(){const cbs=document.querySelectorAll('#load-opts input:checked');let k=1;cbs.forEach(cb=>{k*=+cb.dataset.k||1;});const el=document.getElementById('load-coeff');if(cbs.length>0){el.style.display='block';el.textContent=`Коэффициент загрузки: ×${k.toFixed(2)}`;}else el.style.display='none';return k;}
+document.getElementById('load-opts').addEventListener('change',getLoadingCoeff);
+
+// TRANSPORT
+function toggleT(m){document.getElementById('t-'+m).classList.toggle('sel');selT.has(m)?selT.delete(m):selT.add(m);document.getElementById('sea-opts').style.display=selT.has('sea')?'block':'none';}
+function setSeaMode(m){seaMode=m;['auto','lcl','fcl20','fcl40'].forEach(x=>{const el=document.getElementById('sea-'+x);if(!el)return;el.style.borderColor=x===m?'var(--orange)':'var(--border)';el.querySelector('div').style.color=x===m?'var(--orange)':'var(--t2)';});}
+
+// CARRIERS
+function renderCarriers(){document.getElementById('carrier-cards').innerHTML=CARRIERS.map((c,i)=>`<label class="citem" style="cursor:pointer"><input type="checkbox" id="car-${i}" ${c.checked?'checked':''} style="width:13px;height:13px;margin-top:2px;flex-shrink:0;accent-color:var(--orange)"><div><div class="clbl">${c.name}</div><div class="csub">${c.modes.join(', ')} · ${c.email}</div></div></label>`).join('');}
+function addCarrier(){const name=prompt('Название перевозчика:');if(!name)return;const email=prompt('Email:');if(!email)return;CARRIERS.push({name,email,modes:['air','sea','rail','road'],checked:true});renderCarriers();}
+
+// CUSTOMS CALC
+function calcCustomsCost(cargoUSD,incoterms){if(incoterms==='DDP')return{broker:0,dt:0,svh:0,total:0,days:0};const pt=document.getElementById('customs-pt').value||'MSK',ct=document.getElementById('customs-type').value,cs=CUSTOMS_COST[pt];let broker=cs.broker;if(ct==='express')broker=Math.round(broker*1.5);if(ct==='self')broker=0;const svh=cs.svh_day*cs.days,dt=cargoUSD>200000?500:cargoUSD>100000?400:cargoUSD>50000?300:cargoUSD>10000?200:100;return{broker,dt,svh,total:broker+dt+svh,days:cs.days};}
+
+// CALC MODE
+function calcMode(mode,weight,vol,cargoUSD,readyStr,incoterms,isOS,destKey,seasonEv,loadK){
+  const br=getRouteBase(document.getElementById('from').value);if(!br||!br[mode])return null;
+  const rt=br[mode],cm=(destKey?CITY_META[destKey]:null)||{add:0},cityAdd=cm.add||0;
+  const vw=Math.round(vol*167),cw=Math.max(weight||100,vw);
+  const sk=seasonEv?seasonEv.price_k:1,sd=seasonEv?seasonEv.days_add:0;
+  let freight=0,seaType='',railType='';
+  if(mode==='air'){
+    freight=cw*rt.base*(isOS?2.5:1)*(1+cityAdd*0.3)*sk*loadK;
+  } else if(mode==='sea'){
+    let eff=seaMode;if(eff==='auto'){eff=vol<15?'lcl':vol<35?'fcl20':'fcl40';}
+    if(isOS){seaType='FCL спецтехника';freight=rt.fclBase*3.2;}
+    else if(eff==='lcl'){seaType='LCL сборный';freight=vol*rt.lclM3;}
+    else if(eff==='fcl20'){seaType="FCL 20'";freight=rt.fclBase;}
+    else{seaType="FCL 40'";freight=rt.fclBase*1.65;}
+    freight*=sk*loadK;
+  } else if(mode==='rail'){
+    // ЖД — ставка за контейнер, не за кг
+    const use40=vol>25||weight>21000;
+    railType=use40?"40'":"20'";
+    freight=(use40?rt.cont40:rt.cont20)*(isOS?2.2:1)*sk*loadK;
+    seaType=`ЖД ${railType}`;
+  } else {
+    // Авто — ставка за контейнер/полуприцеп
+    const use40=vol>25||weight>20000;
+    freight=(use40?(rt.cont40||rt.cont20*1.5):(rt.cont20||1800))*(isOS?2.2:1)*sk*loadK;
+  }
+  const fuel=freight*0.18,thc=mode==='sea'?freight*0.06:0,caf=mode==='sea'?freight*0.03:0,docFee=mode==='sea'?85:45,security=mode==='air'?freight*0.04:0;
+  const insurance=(incoterms!=='CIF'&&incoterms!=='CIP'&&incoterms!=='DDP'&&cargoUSD)?cargoUSD*0.002:0;
+  const last=mode==='sea'||mode==='rail'?Math.round(weight*0.0015+vol*8+cityAdd*100):Math.round(weight*0.001+vol*5+cityAdd*80);
+  const subFreight=Math.round(freight+fuel+thc+caf+security+docFee+insurance)+last;
+  const[mn,mx]=rt.days,transit=mn+Math.floor(Math.random()*(mx-mn+1))+Math.round(sd*0.6),customsDays=(mode==='sea'?5:mode==='air'?2:3)+Math.round(sd*0.4),roadDays=Math.round(cityAdd*10),total=transit+customsDays+roadDays;
+  const arrive=new Date(readyStr||new Date());arrive.setDate(arrive.getDate()+total);
+  const carrier=CARRIERS.filter((_,i)=>{const cb=document.getElementById('car-'+i);return cb&&cb.checked&&CARRIERS[i].modes.includes(mode);})[0]?.name||CARRIERS.find(c=>c.modes.includes(mode))?.name||'—';
+  return{mode,freight:Math.round(freight),fuel:Math.round(fuel),thc:Math.round(thc),caf:Math.round(caf),docFee,security:Math.round(security),insurance:Math.round(insurance),last,subFreight,seaType,transit,customsDays,roadDays,total,arrive:arrive.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}),carrier,cw,cityName:cm.name||destKey,isWH:cm.wh||false};
+}
+
+// MAIN CALCULATE
+function cntCount(vol,mode){
+  if(mode==='sea'){
+    let eff=seaMode;if(eff==='auto'){eff=vol<15?'lcl':vol<35?'fcl20':'fcl40';}
+    if(eff==='lcl')return{n:1,type:'LCL сборный'};
+    const cap=eff==='fcl20'?25:55;
+    const n=Math.max(1,Math.ceil(vol/cap));
+    return{n,type:eff==="fcl20"?"FCL 20'":"FCL 40'",cap};
+  }
+  if(mode==='rail'){const cap=vol>25?55:25;const n=Math.max(1,Math.ceil(vol/cap));return{n,type:vol>25?"40' контейнер":"20' контейнер",cap};}
+  if(mode==='road'){const cap=82;const n=Math.max(1,Math.ceil(vol/cap));return{n,type:'Фура',cap};}
+  return{n:1,type:'Авиа'};
+}
+function calculate(){
+  const from=document.getElementById('from').value,to=document.getElementById('to').value;
+  const weight=+document.getElementById('weight').value,vol=getVol();
+  const tnved=document.getElementById('tnved').value.trim(),ready=document.getElementById('readydate').value;
+  const cargoUSD=getCargoUSD(),cargoCur=document.getElementById('cargo-cur').value,cargoVal=+document.getElementById('cargovalue').value||0;
+  const incoterms=document.getElementById('incoterms').value,isOS=vTab==='oversize'&&appMode==='ship';
+  const loadK=getLoadingCoeff();
+  if(!selT.size){
+    document.getElementById('err-t').style.display='block';
+    alert('Выберите хотя бы один вид транспорта (раздел 05 — Авиа / Море / ЖД / Авто)');
+    return;
+  }
+  document.getElementById('err-t').style.display='none';
+  if(!from){alert('Выберите страну отправки');return;}
+  if(appMode==='ship'&&!to){alert('Выберите город назначения');return;}
+  if(appMode==='ship'&&!weight){alert('Укажите вес груза');return;}
+  const btn=document.getElementById('calcbtn');
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Рассчитываем...';
+
+  setTimeout(()=>{
+    btn.disabled=false;btn.textContent='Рассчитать стоимость';
+    const seasonEv=getActiveSeason(ready,from);
+    const modes=[...selT],results=modes.map(m=>calcMode(m,weight,Math.max(vol||0.1,0.1),cargoUSD,ready,incoterms,isOS,to,seasonEv,loadK)).filter(Boolean);
+    const res=document.getElementById('results');
+    if(!results.length){res.innerHTML='<div class="warn-box">По выбранному маршруту выбранные виды транспорта недоступны.</div>';res.classList.remove('hidden');return;}
+    results.sort((a,b)=>a.total-b.total);
+    const cheapest=results.reduce((a,b)=>a.subFreight<b.subFreight?a:b);
+    const fastest=results.reduce((a,b)=>a.total<b.total?a:b);
+    const duty=appMode==='ship'?getDuty(tnved,cargoUSD,incoterms):{duty:0,vat:0,total:0,rate:null,docs:[],name:''};
+    const customsCost=appMode==='ship'?calcCustomsCost(cargoUSD,incoterms):{total:0,broker:0,dt:0,svh:0,days:0};
+    const pc=getPC();
+    const delivCity=document.getElementById('del-city').value;
+    let delivery=null;
+    if(delivCity){const c=DEL_CITIES[delivCity];const veh=autoVehicle(weight,vol||0.1);delivery={city:c.name,cost:Math.round(c.km*veh.rate),days:c.days,km:c.km,type:veh.type};}
+    const eqName=document.getElementById('eq-name')?.value||'';
+
+    let html='';
+    if(seasonEv)html+=`<div class="season-warn">${seasonEv.msg} <b>Коэффициент ×${seasonEv.price_k}, срок +${seasonEv.days_add} дн.</b></div>`;
+    if(loadK>1)html+=`<div class="info-box">Особые условия загрузки: коэффициент ×${loadK.toFixed(2)} применён к фрахту.</div>`;
+    if(cargoVal>0&&cargoCur!=='USD')html+=`<div class="info-box">Стоимость груза: ${cargoVal.toLocaleString('ru')} ${cargoCur} ≈ $${Math.round(cargoUSD).toLocaleString('ru')} USD. Курс ЦБ на дату ДТ может отличаться.</div>`;
+
+    if(appMode==='tkp'){
+      const tnvedInfo=findTnved(tnved);
+      const delivCity2=document.getElementById('del-city').value;
+      let delInfo=null;
+      if(delivCity2&&DEL_CITIES[delivCity2]){
+        const c=DEL_CITIES[delivCity2];const veh=autoVehicle(weight||100,vol||0.1);
+        delInfo={city:c.name,cost:Math.round(c.km*veh.rate),days:c.days,type:veh.type};
+      }
+
+      html+='<div class="range-card">';
+      html+='<div class="range-title" style="font-size:12px;font-weight:700;color:#fff;margin-bottom:14px">';
+      html+=(eqName||'Оборудование')+' · Предварительный расчёт для ТКП ';
+      html+='<span style="color:rgba(255,255,255,.4);font-size:10px;font-weight:500">+'+Math.round((TKP_BUFFER-1)*100)+'% запас</span></div>';
+
+      results.forEach(function(p){
+        const cnt=cntCount(vol||1,p.mode);
+        const delCost=delInfo?delInfo.cost:0;
+        const totalHigh=Math.round((p.subFreight+delCost)*TKP_BUFFER);
+        const cntLabel=cnt.n>1?(cnt.n+'×'+cnt.type):cnt.type;
+
+        html+='<div style="background:rgba(255,255,255,.07);border-radius:var(--r);padding:14px;margin-bottom:8px">';
+        html+='<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">';
+        html+='<div><span style="font-size:13px;font-weight:800;color:#fff">'+MI[p.mode]+' '+MN[p.mode]+'</span>';
+        html+='<span style="font-size:10px;color:rgba(255,255,255,.45);margin-left:8px">'+cntLabel+' · '+p.carrier+'</span></div>';
+        html+='<div style="text-align:right">';
+        html+='<div style="font-size:18px;font-weight:800;color:var(--orange)">'+fmtC(p.subFreight)+' — '+fmtC(Math.round(p.subFreight*TKP_BUFFER))+'</div>';
+        html+='<div style="font-size:10px;color:rgba(255,255,255,.4)">фрахт · '+p.total+' дней</div></div></div>';
+
+        html+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">';
+        // Фрахт
+        html+='<div style="background:rgba(255,255,255,.06);border-radius:var(--r);padding:7px 9px">';
+        html+='<div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:2px">Фрахт</div>';
+        html+='<div style="font-size:12px;font-weight:700;color:#fff">'+fmtC(p.freight)+'</div>';
+        if(cnt.n>1) html+='<div style="font-size:10px;color:rgba(255,255,255,.4)">'+cnt.n+' × '+fmtC(Math.round(p.freight/cnt.n))+'/ед.</div>';
+        html+='</div>';
+        // Довоз
+        html+='<div style="background:rgba(255,255,255,.06);border-radius:var(--r);padding:7px 9px">';
+        if(delInfo){
+          html+='<div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:2px">Довоз до '+delInfo.city+'</div>';
+          html+='<div style="font-size:12px;font-weight:700;color:#fff">'+fmtC(delInfo.cost)+'</div>';
+          html+='<div style="font-size:10px;color:rgba(255,255,255,.4)">'+delInfo.type+' · '+delInfo.days+' дн.</div>';
+        } else {
+          html+='<div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:2px">Довоз</div>';
+          html+='<div style="font-size:11px;color:rgba(255,255,255,.3)">укажите город ↑</div>';
+        }
+        html+='</div>';
+        // Транзит
+        html+='<div style="background:rgba(255,255,255,.06);border-radius:var(--r);padding:7px 9px">';
+        html+='<div style="font-size:9px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:2px">Транзит</div>';
+        html+='<div style="font-size:12px;font-weight:700;color:#fff">'+p.transit+' дн.</div>';
+        html+='<div style="font-size:10px;color:rgba(255,255,255,.4)">+ тамож. '+p.customsDays+' дн.</div>';
+        html+='</div></div>';
+        // Итого
+        if(delInfo){
+          html+='<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;align-items:center">';
+          html+='<span style="font-size:11px;color:rgba(255,255,255,.5)">Итого фрахт + довоз</span>';
+          html+='<span style="font-size:14px;font-weight:800;color:var(--orange)">'+fmtC(p.subFreight+delCost)+' — '+fmtC(totalHigh)+'</span></div>';
+        }
+        html+='</div>';
+      });
+
+      // Документы
+      if(tnvedInfo){
+        html+='<div style="background:rgba(255,255,255,.06);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;margin-top:8px">';
+        html+='<div style="font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-bottom:8px">Документы для таможенного оформления · '+tnvedInfo.name+'</div>';
+        tnvedInfo.docs.forEach(function(d){
+          html+='<div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.06)">';
+          html+='<span style="color:'+(d.r?'#fff':'rgba(255,255,255,.5)')+'">'+( d.r?'✓':'-')+' '+d.n+'</span>';
+          html+='<span style="color:var(--orange);font-weight:600;margin-left:12px">'+d.cost+'</span></div>';
+        });
+        html+='</div>';
+      }
+
+      html+='<div style="font-size:10px;color:rgba(255,255,255,.3);line-height:1.7;margin-bottom:10px;margin-top:8px">';
+      html+='Данные ориентировочные. Запас +'+Math.round((TKP_BUFFER-1)*100)+'% учитывает возможные надбавки и изменение курса. Таможенная пошлина, НДС и сборы — при точном расчёте.';
+      html+='</div></div>';
+
+      html+='<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">';
+      html+='<button class="cbtn" style="flex:1;min-width:140px" onclick="copyTKP()">Скопировать для КП</button>';
+      html+='<button class="cbtn navy" style="flex:1;min-width:140px" onclick="emailResult()">Отправить итог на почту</button>';
+      html+='<button class="cbtn outline" style="flex:1;min-width:140px" onclick="setMode(\'ship\')">Точный расчёт →</button></div>';
+
+      try{saveHistory({mode:'tkp',from:document.getElementById('from').options[document.getElementById('from').selectedIndex]?.text||'',to:document.getElementById('to-input').value||'',eq:eqName,results:results,vol:vol,weight:weight,curSel:curSel});}catch(e){}
+
+    } else {
+      // ОТГРУЗКА — полный расчёт
+      html+=`<div style="font-size:11px;color:var(--t2);margin-bottom:10px;font-weight:500">${results.length} вариант${results.length>1?'а/ов':''} · ${weight.toLocaleString('ru')} кг · ${vol>0?vol.toFixed(3)+' м³':'негабарит'} · ${pc} мест · ${incoterms} · ${curSel}</div>`;
+      results.forEach((p,idx)=>{
+        const isCheap=p===cheapest&&results.length>1,isFast=p===fastest&&results.length>1&&fastest!==cheapest;
+        const fullTotal=p.subFreight+duty.total+customsCost.total;
+        html+=`<div class="rc" style="animation-delay:${idx*0.07}s">
+          <div class="rch"><div class="rcl"><span class="rcico">${MI[p.mode]}</span><div>
+            <span class="rcname">${MN[p.mode]}</span>
+            ${isCheap?'<span class="badge b-best">выгоднее</span>':''}${isFast?'<span class="badge b-fast">быстрее</span>':''}${isOS?'<span class="badge b-os">негабарит</span>':''}${p.seaType?`<span class="badge b-lcl">${p.seaType}</span>`:''}${p.isWH?'<span class="badge b-wh">★ склад СЛТ</span>':''}
+            <div class="rcsub">${p.carrier} → ${p.cityName}</div>
+          </div></div>
+          <div class="rcr">
+            <div class="rcamt">${fmtC(p.subFreight)}</div>
+            ${duty.total>0||customsCost.total>0?`<div class="rcfull">полная стоимость ввоза: ${fmtC(fullTotal)}</div>`:''}
+            <div class="rccur">фрахт + доставка, ориент.</div>
+          </div></div>
+          <div class="g3">
+            <div class="st"><div class="stl">Срок доставки</div><div class="stv">${p.total} дней</div></div>
+            <div class="st"><div class="stl">Прибытие ~</div><div class="stv">${p.arrive}</div></div>
+            <div class="st"><div class="stl">Транзит / тамож. / авто</div><div class="stv">${p.transit} + ${p.customsDays} + ${p.roadDays} дн.</div></div>
+          </div>
+          <div class="bdown">
+            <div class="tbr"><span>Фрахт</span><span>${fmtC(p.freight)}</span></div>
+            <div class="tbr"><span>Топливный сбор (BAF/FSC)</span><span>${fmtC(p.fuel)}</span></div>
+            ${p.thc>0?`<div class="tbr"><span>Терминальный сбор (THC)</span><span>${fmtC(p.thc)}</span></div>`:''}
+            ${p.caf>0?`<div class="tbr"><span>Валютная надбавка (CAF)</span><span>${fmtC(p.caf)}</span></div>`:''}
+            ${p.security>0?`<div class="tbr"><span>Сбор за безопасность</span><span>${fmtC(p.security)}</span></div>`:''}
+            <div class="tbr"><span>Документальный сбор</span><span>${fmtC(p.docFee)}</span></div>
+            ${p.insurance>0?`<div class="tbr"><span>Страховка (0.2%)</span><span>${fmtC(p.insurance)}</span></div>`:''}
+            <div class="tbr"><span>Доставка до ${p.cityName}</span><span>${fmtC(p.last)}</span></div>
+            <div class="tbr tot"><span>Итого фрахт + доставка</span><span>${fmtC(p.subFreight)}</span></div>
+            ${customsCost.total>0?`<div class="tbr cust"><span>Брокер + ДТ + СВХ (${customsCost.days} дн.)</span><span>${fmtC(customsCost.total)}</span></div>`:''}
+            ${duty.duty>0?`<div class="tbr cust"><span>Таможенная пошлина (${Math.round(duty.rate*100)}% от стоимости)</span><span>${fmtC(duty.duty)}</span></div>`:''}
+            ${duty.vat>0?`<div class="tbr cust"><span>НДС при ввозе 20% (от там. стоимости)</span><span>${fmtC(duty.vat)}</span></div>`:''}
+            ${duty.total>0||customsCost.total>0?`<div class="tbr tot"><span>Полная стоимость ввоза</span><span>${fmtC(fullTotal)}</span></div>`:''}
+          </div>
+        </div>`;
+      });
+      if(delivery){
+        html+=`<div class="rc navy-card" style="animation-delay:${results.length*0.07}s">
+          <div class="rch"><div class="rcl"><span class="rcico">🏭</span><div><span class="rcname" style="color:var(--navy)">Довоз по России</span><div class="rcsub">Тверь (склад СЛТ) → ${delivery.city} · ${delivery.type}</div></div></div>
+          <div class="rcr"><div class="rcamt" style="color:var(--navy)">${fmtC(delivery.cost)}</div><div class="rccur">ориентировочно</div></div></div>
+          <div class="g3">
+            <div class="st" style="border-left-color:var(--navy)"><div class="stl">Расстояние от Твери</div><div class="stv">${delivery.km.toLocaleString('ru')} км</div></div>
+            <div class="st" style="border-left-color:var(--navy)"><div class="stl">Срок</div><div class="stv">${delivery.days} дней</div></div>
+            <div class="st" style="border-left-color:var(--navy)"><div class="stl">Тип ТС</div><div class="stv">${delivery.type}</div></div>
+          </div>
+        </div>`;
+      }
+      // Документы
+      const tn=tnved.replace(/\s/g,'');
+      const tnInfo=findTnved(tnved);
+      const baseDocs=[{n:'Инвойс (Invoice)',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Упаковочный лист (Packing List)',r:true,cost:'Предоставляет поставщик',who:'Поставщик'},{n:'Договор купли-продажи',r:true,cost:'Юрист / самостоятельно',who:'Юрист'},{n:'Сертификат происхождения Form A',r:false,cost:'3 000–10 000 ₽',who:'ТПП страны отправки'}];
+      const allDocs=[...baseDocs,...(tnInfo?tnInfo.docs:[])];
+      html+=`<div class="rc" style="animation-delay:${(results.length+(delivery?1:0))*0.07}s">
+        <div style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:4px">Документы для таможенной очистки</div>
+        ${tnInfo?`<div style="font-size:11px;color:var(--t2);margin-bottom:8px;font-weight:500">ТН ВЭД: ${tnved} — ${tnInfo.name} · пошлина ${Math.round(tnInfo.duty*100)}%</div>`:'<div style="font-size:11px;color:var(--warn);margin-bottom:8px;font-weight:600">Код ТН ВЭД не указан — базовый пакет</div>'}
+        <table class="dtable"><thead><tr><th>Документ</th><th>Обязательность</th><th>Стоимость получения</th><th>Кто выдаёт</th></tr></thead>
+        <tbody>${allDocs.map(d=>`<tr><td style="font-weight:600;color:var(--navy)">${d.n}</td><td><span class="dreq ${d.r?'yes':'rec'}">${d.r?'Обяз.':'Рек.'}</span></td><td style="color:var(--t2)">${d.cost}</td><td style="color:var(--t2)">${d.who}</td></tr>`).join('')}</tbody></table>
+      </div>`;
+      html+=`<div class="agent-blk"><div class="agent-ttl">Запросы перевозчикам</div>${results.map(p=>`${MI[p.mode]} ${MN[p.mode]}: ${p.carrier} — расчёт выполнен на основе справочных ставок · нажмите «Отправить запрос» для подтверждения актуальной ставки`).join('<br>')}<br><span style="color:rgba(255,255,255,.4);font-size:10px">Ставки ориентировочные. Для подтверждения отправьте запрос перевозчику.</span></div>`;
+      html+=`<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="cbtn" style="flex:2;min-width:160px" onclick="emailResult()">Отправить итог на почту</button>
+        <button class="cbtn navy" style="flex:1;min-width:130px" onclick="copyResult()">Копировать итог</button>
+      </div>`;
+      saveHistory({mode:'ship',from:document.getElementById('from').options[document.getElementById('from').selectedIndex]?.text||'',to:document.getElementById('to-input').value||'',eq:eqName,results,vol,weight,curSel});
+    }
+    res.classList.remove('hidden');res.innerHTML=html;
+    res.scrollIntoView({behavior:'smooth',block:'start'});
+  },1400);
+}
+
+function copyTKP(){
+  const from=document.getElementById('from').options[document.getElementById('from').selectedIndex]?.text||'';
+  const to=document.getElementById('to-input').value||'';
+  const eq=document.getElementById('eq-name')?.value||'оборудование';
+  const cards=document.querySelectorAll('.rm-card');
+  let text=`Стоимость перевозки: ${eq}\nМаршрут: ${from} → ${to}\n\n`;
+  cards.forEach(c=>{text+=c.innerText.replace(/\n+/g,' · ')+'\n';});
+  text+=`\nДанные ориентировочные, включают запас +${Math.round((TKP_BUFFER-1)*100)}%.\nТочная стоимость уточняется после получения документов от поставщика.\nСЛТ · qc@sltgroup.ru`;
+  navigator.clipboard.writeText(text).then(()=>alert('Скопировано для вставки в КП'));
+}
+
+function copyResult(){
+  const cards=document.querySelectorAll('#results .rc');
+  let text='СЛТ — Расчёт стоимости перевозки\n'+'='.repeat(40)+'\n';
+  cards.forEach(c=>{text+=c.innerText+'\n'+'-'.repeat(30)+'\n';});
+  navigator.clipboard.writeText(text).then(()=>alert('Скопировано'));
+}
+
+function sendRequest(){
+  const from=document.getElementById('from').value;
+  const to=document.getElementById('to').value;
+  const weight=document.getElementById('weight').value;
+  const vol=getVol();
+  const tnved=document.getElementById('tnved').value;
+  const ready=document.getElementById('readydate').value;
+  const cargoVal=document.getElementById('cargovalue').value;
+  const cargoCur=document.getElementById('cargo-cur').value;
+  const incoterms=document.getElementById('incoterms').value;
+  const eqName=document.getElementById('eq-name')?.value||'';
+  const pc=getPC();
+  const fromTxt=document.getElementById('from').options[document.getElementById('from').selectedIndex]?.text||from;
+  const toTxt=document.getElementById('to-input').value||to;
+  const tnvedInfo=findTnved(tnved);
+  const loadCbs=[...document.querySelectorAll('#load-opts input:checked')].map(cb=>{
+    const labels={opentop:'Opentop (открытый верх)',side:'Боковая загрузка',lowbed:'Низкорамник',flatbed:'Площадка (flatbed)',lashing:'Спецкрепёж',adr:'ADR (опасный груз)'};
+    return labels[cb.value]||cb.value;
+  });
+  const active=CARRIERS.filter((_,i)=>{const cb=document.getElementById('car-'+i);return cb&&cb.checked;});
+  if(!active.length){alert('Выберите хотя бы одного перевозчика в разделе 08');return;}
+  if(!from){alert('Выберите страну отправки (раздел 01)');return;}
+
+  const transportTypes=[...selT].map(m=>MN[m]).join(', ')||'не выбраны';
+  const readyFormatted=ready?new Date(ready).toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):'-';
+  const cargoUSD=Math.round(getCargoUSD());
+  const custPt=document.getElementById('customs-pt').value;
+  const custHint=CUSTOMS_HINTS[custPt]||'';
+  const custPtName=document.getElementById('customs-pt').options[document.getElementById('customs-pt').selectedIndex]?.text||custPt;
+
+  // Габариты мест если заполнены
+  let dimsBlock='';
+  if(vTab==='dims'){
+    const pd=getPlacesData().filter(p=>p.l&&p.w&&p.h);
+    if(pd.length){
+      dimsBlock='\nГАБАРИТЫ МЕСТ (Д×Ш×В, см):\n'+pd.map((p,i)=>`  Место ${i+1}: ${p.l}×${p.w}×${p.h} см × ${p.q} шт. — ${p.vol.toFixed(3)} м³`).join('\n');
+    }
+  }
+
+  const emails=active.map(c=>c.email).join('; ');
+  const subj=`Запрос расчёта стоимости перевозки${eqName?' — '+eqName:''}`;
+  const body=
+`Прошу рассчитать стоимость перевозки.
+
+ГРУЗ:
+Наименование: ${eqName||'Промышленное оборудование'}
+Код ТН ВЭД: ${tnved||'уточняется'}${tnvedInfo?' ('+tnvedInfo.name+')':''}
+Вес брутто: ${weight} кг
+Объём: ${vol.toFixed(3)} м³
+Количество мест: ${pc} шт.${dimsBlock}
+
+МАРШРУТ:
+${fromTxt} → ${toTxt}
+Дата готовности: ${readyFormatted}
+Условия поставки: ${incoterms}
+Виды транспорта: ${transportTypes}
+Стоимость груза: ${cargoVal} ${cargoCur}${cargoUSD&&cargoCur!=='USD'?' (≈ $'+cargoUSD.toLocaleString('ru')+' USD)':''}
+Пункт таможни: ${custPtName}${loadCbs.length?'\nОсобые условия: '+loadCbs.join(', '):''}`;
+
+  window.location.href=`mailto:${emails}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+}
+
+function saveHistory(entry){
+  entry.date=new Date().toLocaleString('ru',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  let hist=[];try{hist=JSON.parse(localStorage.getItem('slt_calc_history')||'[]');}catch(e){}
+  hist.unshift(entry);if(hist.length>10)hist=hist.slice(0,10);
+  try{localStorage.setItem('slt_calc_history',JSON.stringify(hist));}catch(e){}
+  renderHistory();
+// Предзаполняем город отправки — Тверь (склад СЛТ)
+document.getElementById('del-from-input').value='Тверь — склад СЛТ';
+document.getElementById('del-from').value='TVR';
+}
+function renderHistory(){
+  let hist=[];try{hist=JSON.parse(localStorage.getItem('slt_calc_history')||'[]');}catch(e){}
+  const sec=document.getElementById('history-sec');
+  const list=document.getElementById('history-list');
+  if(!hist.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  list.innerHTML=hist.map((h,i)=>`
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:12px 14px;margin-bottom:7px;cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">${h.eq||'Оборудование'}</span>
+          <span style="font-size:11px;color:var(--t2);margin-left:8px">${h.from||''}${h.to?' → '+h.to:''}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:10px;color:var(--t3)">${h.date}</span>
+          <span style="font-size:10px;color:var(--orange);font-weight:700">${h.mode==='tkp'?'ТКП':'Точный'}</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:none;background:var(--s2);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--rl) var(--rl);padding:10px 14px;margin-top:-7px;margin-bottom:7px;font-size:11px">
+      ${h.weight?'Вес: '+h.weight.toLocaleString('ru')+' кг · ':''} ${h.vol?'Объём: '+h.vol.toFixed(2)+' м³':''}<br>
+      ${(h.results||[]).map(r=>`${MI[r.mode]} ${MN[r.mode]}: ${r.subFreight?'от $'+r.subFreight.toLocaleString('ru'):''} · ${r.total||'?'} дн.`).join(' &nbsp;|&nbsp; ')}
+    </div>`).join('');
+}
+function clearHistory(){
+  if(!confirm('Очистить историю расчётов?'))return;
+  localStorage.removeItem('slt_calc_history');renderHistory();
+}
+
+function emailResult(){
+  const emailAddr=prompt('Укажите email для отправки итога:','');
+  if(!emailAddr)return;
+  const from=document.getElementById('from').options[document.getElementById('from').selectedIndex]?.text||'';
+  const to=document.getElementById('to-input').value||'';
+  const eq=document.getElementById('eq-name')?.value||'Оборудование';
+  const weight=document.getElementById('weight').value;
+  const vol=getVol();
+  const cards=document.querySelectorAll('#results .rc, #results [style*="range-card"], #results > div');
+  const lines=[];
+  document.querySelectorAll('#results').forEach(r=>{lines.push(r.innerText);});
+  const subj=`Расчёт стоимости перевозки — ${eq}`;
+  const body=`Расчёт стоимости перевозки\n\nОборудование: ${eq}\nМаршрут: ${from} → ${to}\nВес: ${weight} кг · Объём: ${vol.toFixed(2)} м³\nДата: ${new Date().toLocaleDateString('ru')}\n\n${lines.join('\n').substring(0,2000)}\n\n—\nСЛТ · Калькулятор перевозки`;
+  window.location.href=`mailto:${emailAddr}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+}
+
+// Init history on load
+renderHistory();
+
+function reportBug(){
+  const bug=prompt('Опишите баг или предложение:');
+  if(!bug)return;
+  window.location.href=`mailto:qc@sltgroup.ru?subject=${encodeURIComponent('Баг-репорт: Калькулятор СЛТ')}&body=${encodeURIComponent('Описание:\n'+bug+'\n\nВремя: '+new Date().toLocaleString('ru'))}`;
+}
+</script>
+</body>
+</html>
